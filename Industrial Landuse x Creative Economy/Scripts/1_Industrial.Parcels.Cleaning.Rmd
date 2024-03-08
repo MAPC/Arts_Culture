@@ -1,0 +1,64 @@
+---
+title: "1_Industrial.Parcels.Cleaning"
+author: "Brandon Stanaway"
+date: "2024-03-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Read the LPDB back in to review schema
+```{r}
+schema_review <- read.csv(
+  paste0(local_root, "LPDB_DRAFT_12.18.23.csv")
+)
+
+ind_landuse_codes <- c("360","361","362","363","364","365","366","367","368","369",
+  "400","401","402","403","404","410","411","412","413","420","421","423","424","425","426","427","428","430","431","432","433","440","441","442","450","451","452","230","231")
+
+industrial_uses <- schema_review |> 
+  filter(
+    LUC_Assign_M %in% ind_landuse_codes
+  )
+
+ind_shapes <- parcel_polygons |> 
+  inner_join(
+    industrial_uses,
+    by = c("LOC_ID", "TOWN_ID")
+  )
+
+ind_shapes <- ind_shapes |> 
+  select(
+    names(ind_shapes[nchar(names(ind_shapes)) <= 9])
+  )
+
+st_as_sf(ind_shapes)
+
+st_write(
+  ind_shapes,
+  "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Spatial/LPDB.Dec.23_Industrial.Parcels.shp"
+)
+
+```
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
