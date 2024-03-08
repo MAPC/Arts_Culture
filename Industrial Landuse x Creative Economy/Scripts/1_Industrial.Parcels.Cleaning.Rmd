@@ -39,8 +39,9 @@ parcel_root <- "C:/Project_Work/Local_Data/Parcel_DB/"
 
 ```
 
-
 Land Parcel Database 2018
+```{r}
+```
 
 Land Parcel Database December 2023
 ```{r}
