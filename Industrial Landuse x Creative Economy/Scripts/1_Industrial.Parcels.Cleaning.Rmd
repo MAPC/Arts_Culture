@@ -41,6 +41,12 @@ parcel_root <- "C:/Project_Work/Local_Data/Parcel_DB/"
 
 Land Parcel Database 2018
 ```{r}
+
+parcel_polygons_east <- st_read("K:\DataServices\Datasets\Town_Data\_Land_Parcel_Database\Processing\MassGIS_Parcel_Downloads\Statewide_parcels_SHP\L3_TAXPAR_POLY_ASSESS_EAST.shp")
+
+parcel_polygons_west <- st_read("K:\DataServices\Datasets\Town_Data\_Land_Parcel_Database\Processing\MassGIS_Parcel_Downloads\Statewide_parcels_SHP\L3_TAXPAR_POLY_ASSESS_WEST.shp")
+
+parcel_polygons <- rbind(parcel_polygons_east, parcel_polygons_west)
 ```
 
 Land Parcel Database December 2023
