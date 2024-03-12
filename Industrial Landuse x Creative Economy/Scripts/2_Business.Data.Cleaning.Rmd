@@ -7,24 +7,81 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+require(tidyverse)
+require(tidycensus)
+require(lubridate)
+require(stringr)
+require(janitor)
+require(sf)
+require(mapcdatakeys)
+require(dplyr)
+require(readxl)
+
+#
+keys <- mapcdatakeys::all_muni_data_keys |> 
+  select(
+    c(
+      muni_name,
+      muni_id
+    )
+  ) |> 
+  mutate(
+    muni_name = stringr::str_to_title(muni_name)
+  )
+
+#Global options to remove scientific notation.
+options(scipen = 999)
+set.seed(351)
+
+#Set root variables for local data ingestion
+da_root <- "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tabular/raw/"
+
 ```
 
-## R Markdown
+1.0 Load DataAxle and A/C collected data
+```{r}
+#Load the 2023 RPA-input revised DataAxle data.
+data.axle <- read.csv(
+  paste0(da_root, "Revised_DA_2023/dataaxle_2023_revised.csv")
+)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+#Loads the Arts and Culture Spaces recorded in this airtable: https://airtable.com/appY1urvcJd9UmNyr
+a.c_spaces <- read.csv(
+  paste0(da_root, "AC Sites Airtable.csv")
+)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+#Loads Arts and Culture Spaces collected as part of the "Making Space for Art" project.
+#A link to the airtable is here: https://airtable.com/appScRBzSMyNr011m/shrSi3WTESf2ARtK9/tblUIhUmEgbh8LY1h/viwMZVLjibMWEsHIl?blocks=show
+makingspace_spaces <- read.csv(
+  paste0(da_root, "MakingSpace AC Sites.csv")
+)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+2.1 Selecting Relevant Variables from DataAxle Data
+```{r}
+# 2023 edit - changing field names to reflect data axle fields
+data.axle_clean <- data.axle |> 
+  dplyr::select(OBJECTID, CONAME,STADDR,STCITY, STATE, ZIP, STCODE, 
+                CNTYCD, CENSUS, BLKGRP, LATITUDE, LONGITUDE, NAICS, NAICSD, 
+                EMPSIZ, LOCEMP, SALVOL, SLSVDT, ZPOPCD, WEALTH, BBUSIN, 
+                MBUSIN, SBUSIN, HOME, INDFRM, FEMOWN
+  ) |> 
+  mutate(
+    "NAICS_FOUR" = as.character(substr(as.character(NAICS), 1, 4))
+  ) %>%
+  filter(
+    !is.na(LOCEMP) & STCODE == 25
+  ) 
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+2.2 Harmonizing Town Names
+```{r}
+data.axle_clean <- data.axle_clean |> 
+  mutate(
+    STCITY = case_when(
+      
+    )
+  )
+```
