@@ -41,9 +41,14 @@ da_root <- "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tab
 
 1.0 Load DataAxle and A/C collected data
 ```{r}
-#Load the 2023 RPA-input revised DataAxle data.
+#Load the 2023 DataAxls data
 data.axle <- read.csv(
-  paste0(da_root, "Revised_DA_2023/dataaxle_2023_revised.csv")
+  paste0(da_root, "April_2023 - Massachusetts_New.csv")
+)
+
+#Load the 2023 RPA-input revised DataAxle data.
+data.axle_revised <- read.csv(
+  paste0(da_root, "Revised_DA_23/dataaxle_2023_revised.csv")
 )
 
 #Loads the Arts and Culture Spaces recorded in this airtable: https://airtable.com/appY1urvcJd9UmNyr
@@ -62,14 +67,15 @@ makingspace_spaces <- read.csv(
 ```{r}
 # 2023 edit - changing field names to reflect data axle fields
 data.axle_clean <- data.axle |> 
-  dplyr::select(OBJECTID, CONAME,STADDR,STCITY, STATE, ZIP, STCODE, 
+  dplyr::select(CONAME,STADDR,STCITY, STATE, ZIP, STCODE, 
                 CNTYCD, CENSUS, BLKGRP, LATITUDE, LONGITUDE, NAICS, NAICSD, 
                 EMPSIZ, LOCEMP, SALVOL, SLSVDT, ZPOPCD, WEALTH, BBUSIN, 
                 MBUSIN, SBUSIN, HOME, INDFRM, FEMOWN
-  ) |> 
+  ) |>  
   mutate(
-    "NAICS_FOUR" = as.character(substr(as.character(NAICS), 1, 4))
-  ) %>%
+    NAICS.4 = as.character(substr(as.character(NAICS), 1, 4)),
+    NAICS.6 = as.character(substr(as.character(NAICS), 1, 6))
+  ) |> 
   filter(
     !is.na(LOCEMP) & STCODE == 25
   ) 
@@ -83,5 +89,36 @@ data.axle_clean <- data.axle_clean |>
     STCITY = case_when(
       
     )
+  )
+```
+
+2.3 Filtering Arts Businesses
+```{r}
+# From Appendix D (NEFA Core Industries by Creative Category) of 2017 NEFA Report "The Jobs in New England's Creative Economy and Why They Matter"
+# Creation of industry groups by six digit NAICS code (assign to establishments with ifelse function)
+arch.and.design <- c('541310', '541320', '541340', '541410', '541420', '541430', '541490')
+#art.electronic.retail <- c('443142', '448310', '451130', '451140', '451211', '453920', '812921', '812922')
+art.retail <- c('448310', '451130', '451140', '451211', '453920', '812921', '812922') # no electronics-related retail
+art.arch.manu <- c('332323', '337212', '339910', '339992')
+culture.pres <- c('712110', '712120', '712130', '712190')
+mach.comm.manu <- c('333244', '334310', '334614')
+marketing <- c('541810', '541830', '541840', '541850')
+mat.manu <- c('325992', '327110', '327212', '339940')
+media <- c('515111', '515112', '515120', '515210', '517110', '519110', '519120', '519130', '532230')
+motion.pic.teleprod <- c('512110', '512120', '512131', '512132', '512191', '512199')
+music.rec <- c('512210', '512220', '512230', '512240', '512290')
+printing <- c('323111', '323113', '323117', '323120')
+publishing <- c('511110', '511120', '511130', '511191', '511199')
+visual.music.perf.arts <- c('541921', '541922', '611610', '711110', '711120', '711130', '711190', '711510')
+wholesale.art.store <- c('423410', '423940', '424110', '424920')
+
+
+arts_sectors <- c(arch.and.design, art.retail, art.arch.manu, culture.pres,mach.comm.manu,marketing,
+                  mat.manu, media, motion.pic.teleprod, music.rec, printing, publishing, visual.music.perf.arts,
+                  wholesale.art.store)
+
+data.axle_arts.spaces <- data.axle_clean |> 
+  filter(
+    NAICS.6 %in% arts_sectors
   )
 ```
