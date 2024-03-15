@@ -23,7 +23,11 @@ keys <- mapcdatakeys::all_muni_data_keys |>
   select(
     c(
       muni_name,
-      muni_id
+      muni_id,
+      mapc,
+      subrg_acr,
+      cmtyp08,
+      cmsbt08
     )
   ) |> 
   mutate(
@@ -54,11 +58,16 @@ Land Parcel Database December 2023
 #Load full ccompressed assessors file of the land parcel database draft.
 parcel_db <- read.csv(
   paste0(parcel_root, "LPDB_DRAFT_12.18.23.csv")
-)
+) |> 
+  left_join(
+    keys,
+    by = c("TOWN_ID" = "muni_id")
+  )
 
 #Read in parcel polygons.
 parcel_polygons <- st_read(dsn = "C:/Users/bstanaway/Downloads/MassGIS_L3_Parcels_gdb.zip" , layer = "L3_TAXPAR_POLY")
 
+# 1.0 Industrial Parcels
 #Define land use code to filter on. 
 ind_landuse_codes <- c("360","361","362","363","364","365","366","367","368","369",
   "400","401","402","403","404","410","411","412","413","420","421","423","424",
@@ -66,7 +75,7 @@ ind_landuse_codes <- c("360","361","362","363","364","365","366","367","368","36
   "452","230","231")
 
 #Filter assessors records by industrial land use codes.
-industrial_uses <- schema_review |> 
+industrial_uses <- parcel_db |> 
   filter(
     Min_LUC_Assign %in% ind_landuse_codes
   )
@@ -86,7 +95,7 @@ ind_shapes <- ind_shapes |>
   )
 
 #Convert the joined data.frame to a {sf} object to be written to a shp file.
-st_as_sf(ind_shapes)
+ind_shapes <- st_as_sf(ind_shapes)
 
 #Write shp file of the industrial parcels.
 st_write(
@@ -94,6 +103,83 @@ st_write(
   "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Spatial/LPDB.Dec.23_Industrial.Parcels.shp"
 )
 
+rm(industrial_uses)
+rm(ind_shapes)
+
+gc()
+
+#2.0 All MAPC Parcels
+#Filter for parcel assessors records in MAPC
+mapc_parcels <- parcel_db |> 
+  filter(
+    mapc == 1
+  )
+
+#Join parcel polygons and filtered assessor's records.
+#Include only the polygons with the exact LOC_ID match.
+mapc_shapes <- parcel_polygons |> 
+  inner_join(
+    mapc_parcels,
+    by = c("LOC_ID", "TOWN_ID")
+  )
+
+#Remove variables with names too long to be written to a shp file.
+mapc_shapes <- mapc_shapes |> 
+  select(
+    names(mapc_shapes[nchar(names(mapc_shapes)) <= 9])
+  )
+
+#Convert the joined data.frame to a {sf} object to be written to a shp file.
+mapc_shapes <- st_as_sf(mapc_shapes)
+
+#Write shp file of the industrial parcels.
+st_write(
+  mapc_shapes,
+  "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Spatial/LPDB.Dec.23_MAPC.Parcels.shp"
+)
+
+rm(mapc_parcels)
+rm(mapc_shapes)
+
+gc()
+
+#3.0 All MAPC Industrial Parcels
+#Filter for parcel assessors records in MAPC
+mapc.ind_parcels <- parcel_db |> 
+  filter(
+    mapc == 1
+  ) |> 
+  filter(
+    Min_LUC_Assign %in% ind_landuse_codes
+  )
+
+#Join parcel polygons and filtered assessor's records.
+#Include only the polygons with the exact LOC_ID match.
+mapc.ind_shapes <- parcel_polygons |> 
+  inner_join(
+    mapc.ind_parcels,
+    by = c("LOC_ID", "TOWN_ID")
+  )
+
+#Remove variables with names too long to be written to a shp file.
+mapc.ind_shapes <- mapc.ind_shapes |> 
+  select(
+    names(mapc.ind_shapes[nchar(names(mapc.ind_shapes)) <= 9])
+  )
+
+#Convert the joined data.frame to a {sf} object to be written to a shp file.
+mapc.ind_shapes <- st_as_sf(mapc.ind_shapes)
+
+#Write shp file of the industrial parcels.
+st_write(
+  mapc.ind_shapes,
+  "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Spatial/LPDB.Dec.23_MAPC.Ind.Parcels.shp"
+)
+
+rm(mapc.ind_parcels)
+rm(mapc.ind_shapes)
+
+gc()
 ```
 ## R Markdown
 
