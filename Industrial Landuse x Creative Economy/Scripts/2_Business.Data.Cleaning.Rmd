@@ -18,13 +18,14 @@ require(mapcdatakeys)
 require(dplyr)
 require(readxl)
 
-
-#
+#Load in data keys to add geographies to data later on.
 keys <- mapcdatakeys::all_muni_data_keys |> 
   select(
     c(
       muni_name,
-      muni_id
+      muni_id,
+      mapc,
+      subrg_acr
     )
   ) |> 
   mutate(
@@ -97,6 +98,11 @@ data.axle_clean <- data.axle_clean |>
     STCITY = case_when(
       
     )
+  ) |> 
+  #Join MAPC data keys to the data axle data to filter by relevant geographies
+  left_join(
+    keys,
+    c("STCITY" = "muni_name")
   )
 ```
 
@@ -120,13 +126,28 @@ publishing <- c('511110', '511120', '511130', '511191', '511199')
 visual.music.perf.arts <- c('541921', '541922', '611610', '711110', '711120', '711130', '711190', '711510')
 wholesale.art.store <- c('423410', '423940', '424110', '424920')
 
-
+#Create a full list of arts related businesses.
 arts_sectors <- c(arch.and.design, art.retail, art.arch.manu, culture.pres,mach.comm.manu,marketing,
                   mat.manu, media, motion.pic.teleprod, music.rec, printing, publishing, visual.music.perf.arts,
                   wholesale.art.store)
 
+#Filter for the arts related businesses.
 data.axle_arts.spaces <- data.axle_clean |> 
   filter(
     NAICS.6 %in% arts_sectors
   )
+```
+
+2.4 Filter for MAPC geography
+```{r}
+#Join the MAPC data keys to the arts spaces data.
+data.axle_arts.spaces_mapc <- data.axle_arts.spaces |> 
+  filter(
+    mapc == 1
+  )
+
+```
+
+3.0 Compare DataAxle businesses to MAPC-collected Arts data
+```{r}
 ```
