@@ -93,6 +93,7 @@ data.axle_clean <- data.axle |>
 
 2.2 Harmonizing Town Names
 ```{r}
+#Fix incorrect municipality names in the data
 data.axle_clean <- data.axle_clean |> 
   mutate(
     STCITY = case_when(
