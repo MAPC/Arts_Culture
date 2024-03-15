@@ -18,6 +18,7 @@ require(mapcdatakeys)
 require(dplyr)
 require(readxl)
 
+
 #
 keys <- mapcdatakeys::all_muni_data_keys |> 
   select(
@@ -67,15 +68,22 @@ makingspace_spaces <- read.csv(
 ```{r}
 # 2023 edit - changing field names to reflect data axle fields
 data.axle_clean <- data.axle |> 
-  dplyr::select(CONAME,STADDR,STCITY, STATE, ZIP, STCODE, 
+  #Create an OBJECT_ID variable
+  mutate(
+    OBJECT_ID = seq.int(nrow(data.axle))
+  ) |> 
+  #Select the variables needed for this analysis.
+  dplyr::select(OBJECT_ID, CONAME, STADDR, STCITY, STATE, ZIP, STCODE, 
                 CNTYCD, CENSUS, BLKGRP, LATITUDE, LONGITUDE, NAICS, NAICSD, 
                 EMPSIZ, LOCEMP, SALVOL, SLSVDT, ZPOPCD, WEALTH, BBUSIN, 
                 MBUSIN, SBUSIN, HOME, INDFRM, FEMOWN
-  ) |>  
+  ) |> 
+  #Creat variables that represent the 4- and 6-digit versions of NAICS codes
   mutate(
     NAICS.4 = as.character(substr(as.character(NAICS), 1, 4)),
     NAICS.6 = as.character(substr(as.character(NAICS), 1, 6))
   ) |> 
+  #Filter for observations with non-N/A employment + are in MA.
   filter(
     !is.na(LOCEMP) & STCODE == 25
   ) 
