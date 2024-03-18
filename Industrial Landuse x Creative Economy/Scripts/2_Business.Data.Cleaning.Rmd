@@ -95,11 +95,196 @@ data.axle_clean <- data.axle |>
 2.2 Harmonizing Town Names
 ```{r}
 #Fix incorrect municipality names in the data
-data.axle_clean <- municipal_name_fix.func(data.axle_clean, data.axle_clean$STCITY)|> 
+data.axle_clean <- data.axle_clean |> 
+    mutate(
+      STCITY_CLEAN = case_when(
+        #Manchester
+        STCITY %in% c("Manchester-by-the-Sea","Manchestr By Sea") ~ "Manchester",
+        #Foxborough
+        STCITY %in% c("Foxboro") ~ "Foxborough",
+        #North Attleborough
+        STCITY %in% c("North Attleboro") ~ "North Attleborough",
+        #Boston
+        STCITY %in% c("Roxbury", "Roxbury Crossing", "Mission Hill",
+                             "Dorchester", "Grove Hall", "Dorchester Ctr",
+                             "Uphams's Corner", "Mattapan", "South Boston",
+                             "East Boston", "Charlestown", "Jamaica Plain",
+                             "Roslindale", "West Roxbury", "Allston",
+                             "Brighton", "Hyde Park") ~ "Boston",
+        #Arlington
+        STCITY %in% c("East Arlington", "Arlington Hts") ~ "Arlington",
+        #Cambridge
+        STCITY %in% c("North Cambridge", "East Cambridge") ~ "Cambridge",
+        #Newton
+        STCITY %in% c("Newtonville", "Newton Center", "Newton Highlands",
+                             "Newton Lower Fls", "Newton Lower Falls", 
+                             "Newton Upper Fls", "Newton Upper Falls",
+                             "West Newton", "Auburndale", "Chestnut Hill",
+                             "Waban", "Nonatum") ~ "Newton",
+        #Easton
+        STCITY %in% c("North Easton", "South Easton") ~ "Easton",
+        #Weymouth
+        STCITY %in% c("East Weymouth", "South Weymouth", "North Weymouth") ~ "Weymouth",
+        #Falmouth
+        STCITY %in% c("Teaticket", "North Falmouth", "East Falmouth",
+                             "West Falmouth", "Woods Hole", "Waquoit") ~ "Falmouth",
+        #Quincy
+        STCITY %in% c("North Quincy", "Wollaston") ~ "Quincy",
+        #Barnstable
+        STCITY %in% c("Hyannis", "Centerville", "Cotuit", "Cummaquid", 
+                             "Hyannis Port", "Marstons Mills", "Osterville", "West Hyannisport",
+                             "West Barnstable") ~ "Barnstable",
+        #Somerville
+        STCITY %in% c("West Somerville") ~ "Somerville",
+        #Plymouth
+        STCITY %in% c("White Horse Bch", "Manomet") ~ "Plymouth",
+        #Sandwich
+        STCITY %in% c("East Sandwich", "Forestdale") ~ "Sandwich",
+        #Wellfleet
+        STCITY %in% c("South Wellfleet") ~ "Wellfleet",
+        #Amherst
+        STCITY %in% c("North Amherst") ~ "Amherst",
+        #Uxbridge
+        STCITY %in% c("Noth Uxbridge") ~ "Uxbridge",
+        #Great Barrington
+        STCITY %in% c("Housatonic") ~ "Great Barrington",
+        #Tisbury
+        STCITY %in% c("Vineyard Haven") ~ "Tisbury",
+        #Scituate
+        STCITY %in% c("Greenbush", "Humarock", "North Scituate") ~ "Scituate",
+        #Newbury
+        STCITY %in% c("Byfield") ~ "Newbury",
+        #Walpole
+        STCITY %in% c("East Walpole", "South Walpole") ~ "Walpole",
+        #Grafton
+        STCITY %in% c("North Grafton", "South Grafton") ~ "Grafton",
+        #Colrain
+        STCITY %in% c("Shattuckville") ~ "Colrain",
+        #Russell
+        STCITY %in% c("Woronoco") ~ "Russell",
+        #Milton
+        STCITY %in% c("Milton Village") ~ "Milton",
+        #Sheffield
+        STCITY %in% c("Ashley Falls") ~ "Sheffield",
+        #North Attleborough
+        STCITY %in% c("Attleboro Falls") ~ "North Attleborough",
+        #Sutton
+        STCITY %in% c("Manchaug", "Wilkinsonville") ~ "Sutton",
+        #Hatfield
+        STCITY %in% c("West Hatfield", "North Hatfield") ~ "Hatfield",
+        #Douglas
+        STCITY %in% c("East Douglas") ~ "Douglas",
+        #Orleans
+        STCITY %in% c("East Orleans") ~ "Orleans",
+        #Attleboro
+        STCITY %in% c("South Attleboro") ~ "Attleboro",
+        #Templeton
+        STCITY %in% c("Baldwinville", "East Templeton") ~ "Templeton",
+        #Charlton
+        STCITY %in% c("Charlton Depot", "Charlton City") ~ "Charlton",
+        #Freetown
+        STCITY %in% c("Assonet", "East Freetown") ~ "Freetown",
+        #Millbury
+        STCITY %in% c("West Millbury") ~ "Millbury",
+        #Harwich
+        STCITY %in% c("West Harwich", "Harwich Port", "East Harwich") ~ "Harwich",
+        #Dennis
+        STCITY %in% c("South Dennis", "West Dennis", "East Dennis",
+                             "Dennis Port") ~ "Dennis",
+        #Montague
+        STCITY %in% c("Lake Pleasant", "Millers Falls", "Turners Falls") ~ "Montague",
+        #Yarmouth
+        STCITY %in% c("Bass River", "West Yarmouth", "Yarmouth Port",
+                             "South Yarmouth") ~ "Yarmouth",
+        #Marshfield
+        STCITY %in% c("Marshfield Hills", "North Marshfield", "Ocean Bluff",
+                             "Brant Rock", "Green Harbor") ~ "Marshfield",
+        #Norwell
+        STCITY %in% c("Accord") ~ "Norwell",
+        #Brookline
+        STCITY %in% c("Brookline Vlg") ~ "Brookline",
+        #Gosnold
+        STCITY %in% c("Cuttyhunk") ~ "Gosnold",
+        #Williamsburg
+        STCITY %in% c("Haydenville") ~ "Williamsburg",
+        #Medford
+        STCITY %in% c("West Medford") ~ "Medford",
+        #Whately
+        STCITY %in% c("West Whately") ~ "Whately",
+        #Otis
+        STCITY %in% c("East Otis") ~ "Otis",
+        #Wellesley
+        STCITY %in% c("Wellesley Hills", "Babson Park") ~ "Wellesley",
+        #Agawam
+        STCITY %in% c("Feeding Hills") ~ "Agawam",
+        #Hardwick
+        STCITY %in% c("Gilbertville", "South Harwich") ~ "Hardwick",
+        #Bourne
+        STCITY %in% c("Buzzards Bay", "Cataumet", "Monument Beach",
+                             "Pocasset", "Sagamore", "Sagamore Beach") ~ "Bourne",
+        #Westport
+        STCITY %in% c("Westport Point") ~ "Westport",
+        #Eastham
+        STCITY %in% c("North Eastham") ~ "Eastham",
+        #Wareham
+        STCITY %in% c("East Wareham", "West Wareham", "Onset") ~ "Wareham",
+        #Lanesborough
+        STCITY %in% c("Berkshire") ~ "Lanesborough",
+        #Palmer
+        STCITY %in% c("Bondsville", "Thorndike", "Three Rivers") ~ "Palmer",
+        #Haverhill
+        STCITY %in% c("Bradford") ~ "Haverhill",
+        #Pembroke
+        STCITY %in% c("Bryantville") ~ "Pembroke",
+        #Norton
+        STCITY %in% c("Chartley") ~ "Norton",
+        #Leicester
+        STCITY %in% c("Cherry Valley", "Rochdale") ~ "Leicester",
+        #Florida
+        STCITY %in% c("Drury") ~ "Florida",
+        #Taunton
+        STCITY %in% c("East Taunton") ~ "Taunton",
+        #East Bridgewater
+        STCITY %in% c("Elmwood") ~ "East Bridgewater",
+        #Sturbridge
+        STCITY %in% c("Fiskdale") ~ "Sturbridge",
+        #Northampton
+        STCITY %in% c("Florence", "Leeds") ~ "Northampton",
+        #Danvers
+        STCITY %in% c("Hathorne") ~ "Danvers",
+        #Springfield
+        STCITY %in% c("Indian Orchard") ~ "Springfield",
+        #Holden
+        STCITY %in% c("Jefferson") ~ "Holden",
+        #Lenox
+        STCITY %in% c("Lenox Dale") ~ "Lenox",
+        #Stockbrodge
+        STCITY %in% c("Glendale") ~ "Stockbridge",
+        #Chilmark
+        STCITY %in% c("Menemsha") ~ "Chilmark",
+        #New Marlborough
+        STCITY %in% c("Mill River") ~ "New Marlborough",
+        #Hanson
+        STCITY %in% c("Monponsett") ~ "Hanson",
+        #Gill
+        STCITY %in% c("Mt Hermon") ~ "Gill",
+        #Needham
+        STCITY %in% c("Needham Heights") ~ "Needham",
+        #Billerica
+        STCITY %in% c("North Billerica") ~ "Billerica",
+        #Carver
+        STCITY %in% c("North Carver") ~ "Carver",
+        #Chatham
+        STCITY %in% c("North Chatham") ~ "Chatham"
+      )
+    ) |> 
+  mutate(
+    STCITY_CLEAN = coalesce(STCITY_CLEAN, STCITY)
+  ) |> 
   #Join MAPC data keys to the data axle data to filter by relevant geographies
   left_join(
     keys,
-    c("STCITY" = "muni_name")
+    c("STCITY_CLEAN" = "muni_name")
   )
 ```
 
@@ -146,5 +331,47 @@ data.axle_arts.spaces_mapc <- data.axle_arts.spaces |>
 ```
 
 3.0 Compare DataAxle businesses to MAPC-collected Arts data
-```{r}
+3.1 Set the Haversine formula (measures the distance between two points on a sphere)
+```{r haversine-formula}
+# Harversine formula implementation
+
+haversine = function(long1, lat1, long2, lat2, round=3)
+{
+  # convert to radians
+  long1 = long1 * pi / 180
+  lat1  = lat1  * pi / 180
+  long2 = long2 * pi / 180
+  lat2  = lat2  * pi / 180
+  
+  R = 6371 # Earth mean radius in km
+
+  a = sin((lat2 - lat1)/2)^2 + cos(lat1) * cos(lat2) * sin((long2 - long1)/2)^2
+  d = R * 2 * asin(sqrt(a))
+
+  return( round(d,round) ) # distance in km
+}
+```
+
+3.2 Create a distance matrix between the DataAxle data and Making Space data
+```{r nested-for-loop, eval=FALSE}
+# Nested for loop distance calculation implementation
+
+dist = matrix(NA, nrow(data.axle_arts.spaces_mapc), nrow(makingspace_spaces))
+for(i in 1:nrow(data.axle_arts.spaces_mapc)){
+  for(j in 1:nrow(makingspace_spaces)){
+    dist[i,j] = haversine(dn$Longitude[i], dn$Latitude[i],
+                          lq$Longitude[j], lq$Latitude[j])
+  }
+}
+```
+
+```{r vectorized}
+# Vectorized distance calculation implementation
+
+dist = matrix(NA, nrow(data.axle_arts.spaces_mapc), nrow(makingspace_spaces))
+for(i in 1:nrow(data.axle_arts.spaces_mapc))
+{
+  dist[i,] = haversine(dn$Longitude[i], dn$Latitude[i],
+                       lq$Longitude,    lq$Latitude)
+}
 ```
