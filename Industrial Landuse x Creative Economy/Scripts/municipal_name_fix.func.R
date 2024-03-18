@@ -46,7 +46,7 @@ municipal_name_fix.func <- function(df, name_variable){
         #Sandwich
         name_variable %in% c("East Sandwich", "Forestdale") ~ "Sandwich",
         #Wellfleet
-        name_variable %in% c("South Wellfleet" ~ "Wellfleet"),
+        name_variable %in% c("South Wellfleet") ~ "Wellfleet",
         #Amherst
         name_variable %in% c("North Amherst") ~ "Amherst",
         #Uxbridge

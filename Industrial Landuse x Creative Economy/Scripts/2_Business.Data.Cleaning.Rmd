@@ -17,6 +17,7 @@ require(sf)
 require(mapcdatakeys)
 require(dplyr)
 require(readxl)
+source("C:/Project_Work/Arts_Culture/Industrial Landuse x Creative Economy/Scripts/municipal_name_fix.func.R")
 
 #Load in data keys to add geographies to data later on.
 keys <- mapcdatakeys::all_muni_data_keys |> 
@@ -94,12 +95,7 @@ data.axle_clean <- data.axle |>
 2.2 Harmonizing Town Names
 ```{r}
 #Fix incorrect municipality names in the data
-data.axle_clean <- data.axle_clean |> 
-  mutate(
-    STCITY = case_when(
-      
-    )
-  ) |> 
+data.axle_clean <- municipal_name_fix.func(data.axle_clean, data.axle_clean$STCITY)|> 
   #Join MAPC data keys to the data axle data to filter by relevant geographies
   left_join(
     keys,
