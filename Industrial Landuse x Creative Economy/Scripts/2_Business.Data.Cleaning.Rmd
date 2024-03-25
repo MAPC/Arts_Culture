@@ -17,7 +17,7 @@ require(sf)
 require(mapcdatakeys)
 require(dplyr)
 require(readxl)
-source("C:/Project_Work/Arts_Culture/Industrial Landuse x Creative Economy/Scripts/municipal_name_fix.func.R")
+#source("C:/Project_Work/Arts_Culture/Industrial Landuse x Creative Economy/Scripts/municipal_name_fix.func.R")
 
 #Load in data keys to add geographies to data later on.
 keys <- mapcdatakeys::all_muni_data_keys |> 
@@ -330,8 +330,31 @@ data.axle_arts.spaces_mapc <- data.axle_arts.spaces |>
 
 ```
 
+2.5 MAPC Summary Statistics
+```{r}
+arts.biz_by.town <- data.axle_arts.spaces_mapc |> 
+  group_by(
+    STCITY_CLEAN
+  ) |> 
+  summarise(
+    businesses = n(),
+    employment = sum(LOCEMP)
+  ) |> 
+  ungroup()
+
+arts.biz_by.naics <- data.axle_arts.spaces_mapc |> 
+  group_by(
+    NAICSD
+  ) |> 
+  summarise(
+    businesses = n(),
+    employment = sum(LOCEMP)
+  ) |> 
+  ungroup()
+```
+
 3.0 Compare DataAxle businesses to MAPC-collected Arts data
-3.1 Set the Haversine formula (measures the distance between two points on a sphere)
+3.1 Define the Haversine formula (measures the distance between two points on a sphere)
 ```{r haversine-formula}
 # Harversine formula implementation
 
@@ -359,19 +382,8 @@ haversine = function(long1, lat1, long2, lat2, round=3)
 dist = matrix(NA, nrow(data.axle_arts.spaces_mapc), nrow(makingspace_spaces))
 for(i in 1:nrow(data.axle_arts.spaces_mapc)){
   for(j in 1:nrow(makingspace_spaces)){
-    dist[i,j] = haversine(dn$Longitude[i], dn$Latitude[i],
-                          lq$Longitude[j], lq$Latitude[j])
+    dist[i,j] = haversine(data.axle_arts.spaces_mapc$LONGITUDE[i], data.axle_arts.spaces_mapc$LATITUDE[i],
+                          makingspace_spaces$long[j], makingspace_spaces$lat[j])
   }
-}
-```
-
-```{r vectorized}
-# Vectorized distance calculation implementation
-
-dist = matrix(NA, nrow(data.axle_arts.spaces_mapc), nrow(makingspace_spaces))
-for(i in 1:nrow(data.axle_arts.spaces_mapc))
-{
-  dist[i,] = haversine(dn$Longitude[i], dn$Latitude[i],
-                       lq$Longitude,    lq$Latitude)
 }
 ```
