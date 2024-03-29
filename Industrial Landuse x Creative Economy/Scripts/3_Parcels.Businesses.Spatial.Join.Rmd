@@ -5,7 +5,62 @@ date: "2024-03-28"
 output: html_document
 ---
 
+0.0 Set up
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+require(tidyverse)
+require(tidycensus)
+require(lubridate)
+require(stringr)
+require(janitor)
+require(sf)
+require(mapcdatakeys)
+require(dplyr)
+require(readxl)
+#source("C:/Project_Work/Arts_Culture/Industrial Landuse x Creative Economy/Scripts/municipal_name_fix.func.R")
+
+#Load in data keys to add geographies to data later on.
+keys <- mapcdatakeys::all_muni_data_keys |> 
+  select(
+    c(
+      muni_name,
+      muni_id,
+      mapc,
+      subrg_acr
+    )
+  ) |> 
+  mutate(
+    muni_name = stringr::str_to_title(muni_name)
+  )
+
+#Global options to remove scientific notation.
+options(scipen = 999)
+set.seed(351)
+
+#Set root variables for local data ingestion
+#Parcels shapefile
+parcels_root <- "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Spatial/"
+
+#Business data 
+biz_root <- "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tabular/intermediary/"
 ```
 
+1.0 Load relevant data
+```{r}
+#1.1 Parcels
+#Load the parcel polygons
+mapc_parcels <- st_read(
+  paste0(parcels_root, "LPDB.Dec.23_MAPC.Parcels.shp")
+)
+
+#Test visualization
+plot(st_geometry(mapc_parcels))
+
+#1.2 Businesses
+#Load the business data
+readRDS(
+  paste0(biz_root, "DA.23_MAPC.cleaned.rds")
+)
+
+```

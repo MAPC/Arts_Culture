@@ -330,6 +330,14 @@ data.axle_arts.spaces_mapc <- data.axle_arts.spaces |>
 
 ```
 
+2.4.1 Write cleaned Business data
+```{r}
+saveRDS(
+  data.axle_arts.spaces_mapc,
+  file = "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tabular/intermediary/DA.23_MAPC.cleaned.rds"
+)
+```
+
 2.5 MAPC Summary Statistics
 ```{r}
 arts.biz_by.town <- data.axle_arts.spaces_mapc |> 
