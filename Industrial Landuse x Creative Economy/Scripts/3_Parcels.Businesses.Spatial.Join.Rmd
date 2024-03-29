@@ -44,6 +44,10 @@ parcels_root <- "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Dat
 
 #Business data 
 biz_root <- "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tabular/intermediary/"
+
+#
+mass_mainland<-"+proj=lcc +lat_1=42.68333333333333 +lat_2=41.71666666666667 +lat_0=41 +lon_0=-71.5 +x_0=200000 +y_0=750000 +ellps=GRS80 +datum=NAD83 +units=m +no_defs"
+lat_lon_CRS <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
 ```
 
 1.0 Load relevant data
@@ -52,15 +56,70 @@ biz_root <- "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Ta
 #Load the parcel polygons
 mapc_parcels <- st_read(
   paste0(parcels_root, "LPDB.Dec.23_MAPC.Parcels.shp")
-)
+) |> 
+  st_transform(mass_mainland)
 
 #Test visualization
 plot(st_geometry(mapc_parcels))
 
 #1.2 Businesses
 #Load the business data
-readRDS(
+mapc_biz <- readRDS(
   paste0(biz_root, "DA.23_MAPC.cleaned.rds")
-)
+) |> 
+  st_as_sf(coords = c("LATITUDE", "LONGITUDE"))
 
+st_crs(mapc_biz) <-  st_crs(mapc_parcels) 
+  
+mapc_biz <- mapc_biz |> 
+  st_transform(mass_mainland)
+
+```
+
+2.0 Prepare data for spatial join
+```{r}
+#Convert business point data to a a spatial object (sf object)
+mapc_biz.spatial <- st_as_sf(mapc_biz, coords = c("LATITUDE", "LONGITUDE"))
+
+#Set biz points object crs to same one used by parcel polygons.
+st_crs(mapc_biz.spatial) <- st_crs(mapc_parcels)
+
+#Test plot
+plot(st_geometry(mapc_biz))
+
+#Yep those look like they're in MAPC!
+```
+
+3.0 Putting the points into the polygons
+```{r}
+biz_test <- mapc_biz |> 
+  filter(
+    STCITY_CLEAN == "Stow"
+  )
+
+parcel_test <- mapc_parcels |> 
+  filter(
+    CITY == "Stow"
+  )
+
+st_crs(biz_test) == st_crs(mapc_parcels)
+
+
+ggplot()+
+  geom_sf(data = parcel_test)+
+  geom_sf(data = biz_test) +
+  theme_minimal()
+  
+
+
+
+
+
+
+
+biz_in_parcel <- st_join(mapc_biz.spatial, mapc_parcels, join = st_within)
+
+plot(st_geometry(biz_in_parcel))
+
+st_contains(mapc_parcels %>% st_cast("POLYGON"), mapc_biz.spatial %>% st_cast("POINT"), sparse = F)
 ```
