@@ -332,6 +332,12 @@ data.axle_arts.spaces_mapc <- data.axle_arts.spaces |>
 
 2.4.1 Write cleaned Business data
 ```{r}
+write.csv(
+  data.axle_arts.spaces_mapc,
+  "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tabular/intermediary/DA.23_MAPC.cleaned.csv",
+  row.names = F
+)
+
 saveRDS(
   data.axle_arts.spaces_mapc,
   file = "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tabular/intermediary/DA.23_MAPC.cleaned.rds"
