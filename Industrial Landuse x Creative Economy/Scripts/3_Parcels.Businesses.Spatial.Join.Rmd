@@ -45,7 +45,7 @@ parcels_root <- "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Dat
 #Business data 
 biz_root <- "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tabular/intermediary/"
 
-#
+#Set common projecrions + crs for conversion.
 mass_mainland<-"+proj=lcc +lat_1=42.68333333333333 +lat_2=41.71666666666667 +lat_0=41 +lon_0=-71.5 +x_0=200000 +y_0=750000 +ellps=GRS80 +datum=NAD83 +units=m +no_defs"
 lat_lon_CRS <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
 ```
@@ -58,25 +58,23 @@ mapc_parcels <- st_read(
   paste0(parcels_root, "LPDB.Dec.23_MAPC.Parcels.shp")
 )
 
-#Test visualization
-#plot(st_geometry(mapc_parcels))
-
 #1.2 Businesses
 #Load the business data
 #Convert business point data to a a spatial object (sf object)
 mapc_biz.spatial <- readRDS(
   paste0(biz_root, "DA.23_MAPC.cleaned.rds")
 ) |> 
+  #Converting the non-spatial data into a spatial object.
   st_as_sf(
     coords = c("LONGITUDE", "LATITUDE"),
     crs = st_crs(lat_lon_CRS),
     remove = FALSE
-  ) |> 
+  ) |>
+  #Setting CRS to match the polygon's CRS.
   st_transform(
     mass_mainland,
     crs = st_crs(mapc_parcels)
   )
-
 ```
 
 2.0 Putting the points into the polygons
@@ -102,6 +100,8 @@ ggplot()+
 
 #Now lets do the point in polygon join for the full dataset
 biz_in_parcel <- st_join(mapc_biz.spatial, mapc_parcels, join = st_within)
+```
 
-#st_contains(mapc_parcels %>% st_cast("POLYGON"), mapc_biz.spatial %>% st_cast("POINT"), sparse = F)
+3.0
+```{r}
 ```
