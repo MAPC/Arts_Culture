@@ -56,43 +56,34 @@ lat_lon_CRS <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
 #Load the parcel polygons
 mapc_parcels <- st_read(
   paste0(parcels_root, "LPDB.Dec.23_MAPC.Parcels.shp")
-) |> 
-  st_transform(mass_mainland)
+)
 
 #Test visualization
-plot(st_geometry(mapc_parcels))
+#plot(st_geometry(mapc_parcels))
 
 #1.2 Businesses
 #Load the business data
-mapc_biz <- readRDS(
+#Convert business point data to a a spatial object (sf object)
+mapc_biz.spatial <- readRDS(
   paste0(biz_root, "DA.23_MAPC.cleaned.rds")
 ) |> 
-  st_as_sf(coords = c("LATITUDE", "LONGITUDE"))
-
-st_crs(mapc_biz) <-  st_crs(mapc_parcels) 
-  
-mapc_biz <- mapc_biz |> 
-  st_transform(mass_mainland)
+  st_as_sf(
+    coords = c("LONGITUDE", "LATITUDE"),
+    crs = st_crs(lat_lon_CRS),
+    remove = FALSE
+  ) |> 
+  st_transform(
+    mass_mainland,
+    crs = st_crs(mapc_parcels)
+  )
 
 ```
 
-2.0 Prepare data for spatial join
+2.0 Putting the points into the polygons
 ```{r}
-#Convert business point data to a a spatial object (sf object)
-mapc_biz.spatial <- st_as_sf(mapc_biz, coords = c("LATITUDE", "LONGITUDE"))
-
-#Set biz points object crs to same one used by parcel polygons.
-st_crs(mapc_biz.spatial) <- st_crs(mapc_parcels)
-
-#Test plot
-plot(st_geometry(mapc_biz))
-
-#Yep those look like they're in MAPC!
-```
-
-3.0 Putting the points into the polygons
-```{r}
-biz_test <- mapc_biz |> 
+#Testing that the points are projected similar to the polygons.
+#Using Stow as an example because it's small + has only a few points
+biz_test <- mapc_biz.spatial |> 
   filter(
     STCITY_CLEAN == "Stow"
   )
@@ -102,24 +93,15 @@ parcel_test <- mapc_parcels |>
     CITY == "Stow"
   )
 
-st_crs(biz_test) == st_crs(mapc_parcels)
-
-
 ggplot()+
   geom_sf(data = parcel_test)+
   geom_sf(data = biz_test) +
   theme_minimal()
-  
 
+#Hell yeah - the points are in the polygons!
 
-
-
-
-
-
+#Now lets do the point in polygon join for the full dataset
 biz_in_parcel <- st_join(mapc_biz.spatial, mapc_parcels, join = st_within)
 
-plot(st_geometry(biz_in_parcel))
-
-st_contains(mapc_parcels %>% st_cast("POLYGON"), mapc_biz.spatial %>% st_cast("POINT"), sparse = F)
+#st_contains(mapc_parcels %>% st_cast("POLYGON"), mapc_biz.spatial %>% st_cast("POINT"), sparse = F)
 ```
