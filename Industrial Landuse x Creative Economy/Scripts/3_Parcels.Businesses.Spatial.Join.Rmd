@@ -100,8 +100,24 @@ ggplot()+
 
 #Now lets do the point in polygon join for the full dataset
 biz_in_parcel <- st_join(mapc_biz.spatial, mapc_parcels, join = st_within)
+parcel_w_biz <- st_join(mapc_parcels, mapc_biz.spatial, join = st_within)
 ```
 
-3.0
+3.0 Tabular Analysis
 ```{r}
+#Use codes
+Biz_LUC <- biz_in_parcel |> 
+  group_by(
+    Min_LUC_ASSIGN
+  ) |> 
+  summarise(
+    Num_Business = nrow()
+  ) |> 
+  ungroup()
+```
+
+4.0 Spatial Analysis
+```{r}
+#Lets visualize the parcels that do have arts businesses in them
+
 ```
