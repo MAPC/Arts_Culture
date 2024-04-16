@@ -100,7 +100,7 @@ ggplot()+
 
 #Now lets do the point in polygon join for the full dataset
 biz_in_parcel <- st_join(mapc_biz.spatial, mapc_parcels, join = st_within)
-parcel_w_biz <- st_join(mapc_parcels, mapc_biz.spatial, join = st_within)
+#parcel_w_biz <- st_join(mapc_parcels, mapc_biz.spatial, join = st_within)
 ```
 
 3.0 Tabular Analysis
@@ -108,12 +108,23 @@ parcel_w_biz <- st_join(mapc_parcels, mapc_biz.spatial, join = st_within)
 #Use codes
 Biz_LUC <- biz_in_parcel |> 
   group_by(
-    Min_LUC_ASSIGN
+    Min_LUC
   ) |> 
   summarise(
-    Num_Business = nrow()
+    Num_Business = n()
   ) |> 
   ungroup()
+
+sf_res <- biz_in_parcel |> 
+  select(
+    Min_LUC,
+    CONAME,
+    STADDR,
+    STCITY,
+    ADDR_NUM,
+    FULL_STR,
+    CITY
+  )
 ```
 
 4.0 Spatial Analysis
