@@ -26,7 +26,8 @@ keys <- mapcdatakeys::all_muni_data_keys |>
       muni_name,
       muni_id,
       mapc,
-      subrg_acr
+      subrg_acr,
+      cosub_5y21
     )
   ) |> 
   mutate(
@@ -285,10 +286,19 @@ data.axle_clean <- data.axle_clean |>
   left_join(
     keys,
     c("STCITY_CLEAN" = "muni_name")
+  ) |> 
+  select(
+    -c(
+      STCITY
+    )
   )
 ```
 
-2.3 Filtering Arts Businesses
+2.3 Geocoding Addresses
+```{r}
+```
+
+2.4 Filtering Arts Businesses
 ```{r}
 # From Appendix D (NEFA Core Industries by Creative Category) of 2017 NEFA Report "The Jobs in New England's Creative Economy and Why They Matter"
 # Creation of industry groups by six digit NAICS code (assign to establishments with ifelse function)
@@ -320,7 +330,7 @@ data.axle_arts.spaces <- data.axle_clean |>
   )
 ```
 
-2.4 Filter for MAPC geography
+2.5 Filter for MAPC geography
 ```{r}
 #Join the MAPC data keys to the arts spaces data.
 data.axle_arts.spaces_mapc <- data.axle_arts.spaces |> 
@@ -330,7 +340,8 @@ data.axle_arts.spaces_mapc <- data.axle_arts.spaces |>
 
 ```
 
-2.4.1 Write cleaned Business data
+
+2.5.1 Write cleaned Business data
 ```{r}
 write.csv(
   data.axle_arts.spaces_mapc,
@@ -346,25 +357,61 @@ saveRDS(
 
 2.5 MAPC Summary Statistics
 ```{r}
+#Number of Arts Businesses by Municipality
 arts.biz_by.town <- data.axle_arts.spaces_mapc |> 
   group_by(
     STCITY_CLEAN
   ) |> 
   summarise(
     businesses = n(),
-    employment = sum(LOCEMP)
+    employment = sum(LOCEMP),
+    emp.by.biz = round(employment/businesses,2)
   ) |> 
-  ungroup()
+  ungroup() |> 
+  arrange(
+    desc(businesses)
+  )
 
+#99 of MAPC's 101 municipalities are home to at least one arts business.
+
+#Number of Arts Businesses by 6-Digit NAICS Code
 arts.biz_by.naics <- data.axle_arts.spaces_mapc |> 
   group_by(
-    NAICSD
+    NAICSD,
+    NAICS.6
   ) |> 
   summarise(
     businesses = n(),
-    employment = sum(LOCEMP)
+    employment = sum(LOCEMP),
+    emp.by.biz = round(employment/businesses,2)
   ) |> 
-  ungroup()
+  ungroup() |> 
+  arrange(
+    desc(businesses)
+  )
+
+#49 different types of arts business are represented in the MAPC region.
+
+#Number of Arts businesses by municipality and 6-Digit NAICS Code
+arts.biz_by.town.by.naics <- data.axle_arts.spaces_mapc |> 
+  group_by(
+    STCITY_CLEAN,
+    NAICSD,
+    NAICS.6
+  ) |> 
+  summarise(
+    businesses = n(),
+    employment = sum(LOCEMP),
+    emp.by.biz = round(employment/businesses,2)
+  ) |> 
+  ungroup() |> 
+  arrange(
+    desc(desc(STCITY_CLEAN))
+  )
+```
+
+2.6 Summary Statistics Maps
+```{r}
 ```
 
 3.0 Compare DataAxle businesses to MAPC-collected Arts data

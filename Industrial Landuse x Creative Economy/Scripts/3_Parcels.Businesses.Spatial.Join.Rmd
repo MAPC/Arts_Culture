@@ -103,6 +103,114 @@ biz_in_parcel <- st_join(mapc_biz.spatial, mapc_parcels, join = st_within)
 #parcel_w_biz <- st_join(mapc_parcels, mapc_biz.spatial, join = st_within)
 ```
 
+2.1 QA/QC SMall Muni Check
+```{r}
+address_check <- biz_in_parcel |> 
+  select(
+    Min_LUC,
+    CONAME,
+    STADDR,
+    STCITY_CLEAN,
+    LOC_ID,
+    ADDR_NUM,
+    FULL_STR,
+    CITY
+  ) |> 
+  filter(
+    STCITY_CLEAN == "Stow"
+  ) |>
+  mutate(
+    STADDR_NUM = word(STADDR, start = 1, sep = " "),
+    addr_num_check = if_else(ADDR_NUM == STADDR_NUM, 1 , 0)
+  )
+
+joyleduc_parcel <- mapc_parcels |> 
+  filter(
+    LOC_ID == "M_201269_909233"
+  )
+
+joyleduc_biz <- mapc_biz.spatial |> 
+  filter(
+    CONAME == "Joy Leduc Photography LLC"
+  )
+
+ggplot()+
+  geom_sf(data = joyleduc_parcel)+
+  geom_sf(data = joyleduc_biz) +
+  theme_minimal()
+
+#Multi_address, single loc_id parcels dont have all address information. Make an address match an issue.
+#Data Axle does not have full addresses some of the time.
+  
+```
+
+2.2 Medium Muni Check
+```{r}
+address_check <- biz_in_parcel |> 
+  select(
+    Min_LUC,
+    CONAME,
+    STADDR,
+    STCITY_CLEAN,
+    LOC_ID,
+    ADDR_NUM,
+    FULL_STR,
+    CITY
+  ) |> 
+  filter(
+    STCITY_CLEAN == "Waltham"
+  ) |>
+  mutate(
+    STADDR_NUM = word(STADDR, start = 1, sep = " "),
+    addr_num_check = if_else(ADDR_NUM == STADDR_NUM, 1 , 0)
+  )
+
+hp_parcel <- mapc_parcels |> 
+  filter(
+    LOC_ID == "F_727286_2959936"
+  )
+
+hp_biz <- mapc_biz.spatial |> 
+  filter(
+    CONAME == "Harvard Printing" & STCITY_CLEAN == "Waltham"
+  )
+
+ggplot()+
+  geom_sf(data = hp_parcel)+
+  geom_sf(data = hp_biz) +
+  theme_minimal()
+
+waltham_parcels <- mapc_parcels |> 
+  filter(
+    CITY == "Waltham" & (FULL_STR == "ELM ST" | FULL_STR == "MOODY ST")
+  )
+
+ggplot() +
+  geom_sf(data = waltham_parcels, aes(fill = FULL_STR))+
+  geom_sf(data = hp_biz) +
+  theme_minimal()
+
+#Data axle list this business to be located at 36 Elm Street. The point falls at 362 Moody Street. 
+#Data Axle has LAT/LON that do not match the address given in the data.
+
+rsp_biz <- mapc_biz.spatial |> 
+  filter(
+    CONAME == "Red Spot Printing" & STCITY_CLEAN == "Waltham"
+  )
+
+waltham_parcels <- mapc_parcels |> 
+  filter(
+    CITY == "Waltham" & (FULL_STR == "NEWTON ST" | FULL_STR == "CALVARY ST")
+  )
+
+ggplot() +
+  geom_sf(data = waltham_parcels, aes(fill = FULL_STR))+
+  geom_sf(data = rsp_biz) +
+  theme_minimal()
+
+#Here we have an example of the parcel data not having am address (or parcel) that matches the address of the business (182 Newton St vs 4 Calvary St).
+```
+
 3.0 Tabular Analysis
 ```{r}
 #Use codes
@@ -114,17 +222,6 @@ Biz_LUC <- biz_in_parcel |>
     Num_Business = n()
   ) |> 
   ungroup()
-
-sf_res <- biz_in_parcel |> 
-  select(
-    Min_LUC,
-    CONAME,
-    STADDR,
-    STCITY,
-    ADDR_NUM,
-    FULL_STR,
-    CITY
-  )
 ```
 
 4.0 Spatial Analysis
