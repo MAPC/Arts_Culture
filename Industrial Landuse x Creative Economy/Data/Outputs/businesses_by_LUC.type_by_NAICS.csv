@@ -16,63 +16,56 @@
 "15","Mixed Use","Graphic Design Services","541430",3,7,2.33
 "16","Single Family Residence","Architectural Services","541310",3,30,10
 "17","Tax Exempt Other","Museums","712110",3,33,11
-"18","Unknown","Advertising Agencies","541810",3,16,5.33
-"19","Apartments with Four or more units","Museums","712110",2,10,5
-"20","Commercial","Indoor and Outdoor Display Advertising","541850",2,41,20.5
-"21","Commercial","Nature Parks and Other Similar Institutions","712190",2,15,7.5
-"22","Commercial","Sound Recording Studios","512240",2,8,4
-"23","Federal State or Municipal","Museums","712110",2,24,12
-"24","Industrial","Architectural Services","541310",2,12,6
-"25","Industrial","Independent Artists, Writers, and Performers","711510",2,3,1.5
-"26","Industrial","Interior Design Services","541410",2,4,2
-"27","Industrial","Support Activities For Printing","323120",2,13,6.5
-"28","Mixed Use","Commercial Photography","541922",2,3,1.5
-"29","Mixed Use","Commercial Screen Printing","323113",2,17,8.5
-"30","Single Family Residence","Independent Artists, Writers, and Performers","711510",2,3,1.5
-"31","Single Family Residence","Landscape Architectural Services","541320",2,8,4
-"32","Single Family Residence","Photography Studios, Portrait","541921",2,5,2.5
-"33","Tax Exempt Other","Nature Parks and Other Similar Institutions","712190",2,22,11
-"34","Apartments with Four or more units","Historical Sites","712120",1,5,5
-"35","Apartments with Four or more units","Motion Picture and Video Production","512110",1,2,2
-"36","Apartments with Four or more units","Other Performing Arts Companies","711190",1,2,2
-"37","Apartments with Four or more units","Photography Studios, Portrait","541921",1,1,1
-"38","Commercial","Advertising Agencies","541810",1,12,12
-"39","Commercial","Commercial Screen Printing","323113",1,5,5
-"40","Commercial","Motion Picture Theaters (except Drive-Ins)","512131",1,8,8
-"41","Commercial","Other Motion Picture and Video Industries","512199",1,18,18
-"42","Commercial","Other Specialized Design Services","541490",1,1,1
-"43","Commercial Vacant","Other Performing Arts Companies","711190",1,3,3
-"44","Condominium","Independent Artists, Writers, and Performers","711510",1,15,15
-"45","Condominium","Museums","712110",1,2,2
-"46","Condominium","Other Performing Arts Companies","711190",1,2,2
-"47","Industrial","Commercial Photography","541922",1,1,1
-"48","Industrial","Graphic Design Services","541430",1,19,19
-"49","Industrial","Landscape Architectural Services","541320",1,7,7
-"50","Industrial","Nature Parks and Other Similar Institutions","712190",1,6,6
-"51","Industrial","Photographic Equipment and Supplies Merchant Whole","423410",1,8,8
-"52","Industrial","Photography Studios, Portrait","541921",1,1,1
-"53","Industrial","Sound Recording Studios","512240",1,2,2
-"54","Industrial","Unclassified Establishments","541810",1,3,3
-"55","Mixed Use","Advertising Agencies","541810",1,4,4
-"56","Mixed Use","Architectural Services","541310",1,4,4
-"57","Mixed Use","Landscape Architectural Services","541320",1,1,1
-"58","Mixed Use","Motion Picture and Video Production","512110",1,4,4
-"59","Mixed Use","Photography Studios, Portrait","541921",1,2,2
-"60","Single Family Residence","Fine Arts Schools","611610",1,6,6
-"61","Single Family Residence","Motion Picture and Video Production","512110",1,3,3
-"62","Single Family Residence","Ornamental and Architectural Metal Work Manufactur","332323",1,8,8
-"63","Single Family Residence","Theater Companies and Dinner Theaters","711110",1,4,4
-"64","Tax Exempt Other","Commercial Photography","541922",1,1,1
-"65","Tax Exempt Other","Fine Arts Schools","611610",1,1,1
-"66","Tax Exempt Other","Historical Sites","712120",1,1,1
-"67","Tax Exempt Other","Theater Companies and Dinner Theaters","711110",1,100,100
-"68","Two or Three Family Residences","Architectural Services","541310",1,4,4
-"69","Two or Three Family Residences","Commercial Printing (except Screen and Books)","323111",1,3,3
-"70","Two or Three Family Residences","Motion Picture and Video Production","512110",1,4,4
-"71","Two or Three Family Residences","Musical Groups and Artists","711130",1,2,2
-"72","Unknown","Fine Arts Schools","611610",1,1,1
-"73","Unknown","Independent Artists, Writers, and Performers","711510",1,1,1
-"74","Unknown","Museums","712110",1,3,3
-"75","Unknown","Musical Groups and Artists","711130",1,5,5
-"76","Unknown","Nature Parks and Other Similar Institutions","712190",1,8,8
-"77","Unknown","Other Specialized Design Services","541490",1,2,2
+"18","Apartments with Four or more units","Museums","712110",2,10,5
+"19","Commercial","Indoor and Outdoor Display Advertising","541850",2,41,20.5
+"20","Commercial","Nature Parks and Other Similar Institutions","712190",2,15,7.5
+"21","Commercial","Sound Recording Studios","512240",2,8,4
+"22","Federal State or Municipal","Museums","712110",2,24,12
+"23","Industrial","Architectural Services","541310",2,12,6
+"24","Industrial","Independent Artists, Writers, and Performers","711510",2,3,1.5
+"25","Industrial","Interior Design Services","541410",2,4,2
+"26","Industrial","Support Activities For Printing","323120",2,13,6.5
+"27","Mixed Use","Commercial Photography","541922",2,3,1.5
+"28","Mixed Use","Commercial Screen Printing","323113",2,17,8.5
+"29","Single Family Residence","Independent Artists, Writers, and Performers","711510",2,3,1.5
+"30","Single Family Residence","Landscape Architectural Services","541320",2,8,4
+"31","Single Family Residence","Photography Studios, Portrait","541921",2,5,2.5
+"32","Tax Exempt Other","Nature Parks and Other Similar Institutions","712190",2,22,11
+"33","Apartments with Four or more units","Historical Sites","712120",1,5,5
+"34","Apartments with Four or more units","Motion Picture and Video Production","512110",1,2,2
+"35","Apartments with Four or more units","Other Performing Arts Companies","711190",1,2,2
+"36","Apartments with Four or more units","Photography Studios, Portrait","541921",1,1,1
+"37","Commercial","Advertising Agencies","541810",1,12,12
+"38","Commercial","Commercial Screen Printing","323113",1,5,5
+"39","Commercial","Motion Picture Theaters (except Drive-Ins)","512131",1,8,8
+"40","Commercial","Other Motion Picture and Video Industries","512199",1,18,18
+"41","Commercial","Other Specialized Design Services","541490",1,1,1
+"42","Commercial Vacant","Other Performing Arts Companies","711190",1,3,3
+"43","Condominium","Independent Artists, Writers, and Performers","711510",1,15,15
+"44","Condominium","Museums","712110",1,2,2
+"45","Condominium","Other Performing Arts Companies","711190",1,2,2
+"46","Industrial","Commercial Photography","541922",1,1,1
+"47","Industrial","Graphic Design Services","541430",1,19,19
+"48","Industrial","Landscape Architectural Services","541320",1,7,7
+"49","Industrial","Nature Parks and Other Similar Institutions","712190",1,6,6
+"50","Industrial","Photographic Equipment and Supplies Merchant Whole","423410",1,8,8
+"51","Industrial","Photography Studios, Portrait","541921",1,1,1
+"52","Industrial","Sound Recording Studios","512240",1,2,2
+"53","Industrial","Unclassified Establishments","541810",1,3,3
+"54","Mixed Use","Advertising Agencies","541810",1,4,4
+"55","Mixed Use","Architectural Services","541310",1,4,4
+"56","Mixed Use","Landscape Architectural Services","541320",1,1,1
+"57","Mixed Use","Motion Picture and Video Production","512110",1,4,4
+"58","Mixed Use","Photography Studios, Portrait","541921",1,2,2
+"59","Single Family Residence","Fine Arts Schools","611610",1,6,6
+"60","Single Family Residence","Motion Picture and Video Production","512110",1,3,3
+"61","Single Family Residence","Ornamental and Architectural Metal Work Manufactur","332323",1,8,8
+"62","Single Family Residence","Theater Companies and Dinner Theaters","711110",1,4,4
+"63","Tax Exempt Other","Commercial Photography","541922",1,1,1
+"64","Tax Exempt Other","Fine Arts Schools","611610",1,1,1
+"65","Tax Exempt Other","Historical Sites","712120",1,1,1
+"66","Tax Exempt Other","Theater Companies and Dinner Theaters","711110",1,100,100
+"67","Two or Three Family Residences","Architectural Services","541310",1,4,4
+"68","Two or Three Family Residences","Commercial Printing (except Screen and Books)","323111",1,3,3
+"69","Two or Three Family Residences","Motion Picture and Video Production","512110",1,4,4
+"70","Two or Three Family Residences","Musical Groups and Artists","711130",1,2,2
