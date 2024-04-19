@@ -62,11 +62,12 @@ mapc_parcels <- st_read(
 #Load the business data
 #Convert business point data to a a spatial object (sf object)
 mapc_biz.spatial <- readRDS(
-  paste0(biz_root, "DA.23_MAPC.cleaned.rds")
+  paste0(biz_root, "DA.23_MAPC.cleaned_waltham.rds")
 ) |> 
   #Converting the non-spatial data into a spatial object.
   st_as_sf(
-    coords = c("LONGITUDE", "LATITUDE"),
+    #coords = c("LONGITUDE", "LATITUDE"),
+    coords = c("long","lat"),
     crs = st_crs(lat_lon_CRS),
     remove = FALSE
   ) |>
@@ -146,6 +147,7 @@ ggplot()+
 
 2.2 Medium Muni Check
 ```{r}
+#Dataset to check address matching
 address_check <- biz_in_parcel |> 
   select(
     Min_LUC,
@@ -165,20 +167,11 @@ address_check <- biz_in_parcel |>
     addr_num_check = if_else(ADDR_NUM == STADDR_NUM, 1 , 0)
   )
 
-hp_parcel <- mapc_parcels |> 
-  filter(
-    LOC_ID == "F_727286_2959936"
-  )
-
+#First Biz
 hp_biz <- mapc_biz.spatial |> 
   filter(
     CONAME == "Harvard Printing" & STCITY_CLEAN == "Waltham"
   )
-
-ggplot()+
-  geom_sf(data = hp_parcel)+
-  geom_sf(data = hp_biz) +
-  theme_minimal()
 
 waltham_parcels <- mapc_parcels |> 
   filter(
@@ -192,15 +185,17 @@ ggplot() +
 
 #Data axle list this business to be located at 36 Elm Street. The point falls at 362 Moody Street. 
 #Data Axle has LAT/LON that do not match the address given in the data.
+#FIXED via geocoding!
 
+#Second Biz
 rsp_biz <- mapc_biz.spatial |> 
   filter(
-    CONAME == "Red Spot Printing" & STCITY_CLEAN == "Waltham"
+    CONAME == "Hajian Architects Inc" & STCITY_CLEAN == "Waltham"
   )
 
 waltham_parcels <- mapc_parcels |> 
   filter(
-    CITY == "Waltham" & (FULL_STR == "NEWTON ST" | FULL_STR == "CALVARY ST")
+    CITY == "Waltham" & (FULL_STR == "DEXTER ST" | FULL_STR == "DEXTER AVE")
   )
 
 ggplot() +
@@ -208,20 +203,27 @@ ggplot() +
   geom_sf(data = rsp_biz) +
   theme_minimal()
 
-#Here we have an example of the parcel data not having am address (or parcel) that matches the address of the business (182 Newton St vs 4 Calvary St).
+#Here we have an example of the parcel data not having am address (or parcel) that matches the address of the business (56 Dexter Ave vs 32 Dexter Street). That said, 56 Dexter Ave was geocoded to the appropriate location (no 56 Dexter Ave exists.)
 ```
 
 3.0 Tabular Analysis
 ```{r}
 #Use codes
-Biz_LUC <- biz_in_parcel |> 
+Biz_by_LUC <- biz_in_parcel |> 
   group_by(
     Min_LUC
   ) |> 
   summarise(
-    Num_Business = n()
+    Num_Business = n(),
+    Employment = sum(LOCEMP),
+    Avg
   ) |> 
   ungroup()
+
+
+Biz_by_LUC_by_NAICS
+
+Biz_by_LUC_Muni
 ```
 
 4.0 Spatial Analysis

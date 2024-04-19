@@ -17,6 +17,8 @@ require(sf)
 require(mapcdatakeys)
 require(dplyr)
 require(readxl)
+require(tidygeocoder)
+require(gt)
 #source("C:/Project_Work/Arts_Culture/Industrial Landuse x Creative Economy/Scripts/municipal_name_fix.func.R")
 
 #Load in data keys to add geographies to data later on.
@@ -296,6 +298,54 @@ data.axle_clean <- data.axle_clean |>
 
 2.3 Geocoding Addresses
 ```{r}
+#Create a concatenated address field: Street Address, City, State, ZIP Code
+data.axle_clean.geocoded <- data.frame()
+muni_id <- unique(data.axle_clean$muni_id)
+
+for (i in muni_id){
+  
+  tmp <- data.axle_clean |> 
+    filter(
+      muni_id == i
+    ) |> 
+  mutate(
+    #Convert ZIP to string + add leading zero to make ZIP codes consistently five
+    #digits.
+    ZIP = as.character(str_pad(ZIP, width = 5, side = c("left"), pad = 0)),
+    #Create a complete address column.
+    COMPLETE_ADDR = str_c(STADDR, STCITY_CLEAN, STATE, ZIP, sep = " ")
+  ) |> 
+  #Call the geocoder
+  tidygeocoder::geocode(
+    address = COMPLETE_ADDR,
+    method = "arcgis"
+  )
+  
+  data.axle_clean.geocoded <- bind_rows(data.axle_clean.geocoded, tmp)
+  
+  print(paste0("Finished Geocoding Municipality:", i))
+  
+  rm(tmp)
+  
+}
+
+data.axle_clean.geocoded_waltham <- data.axle_clean  |> 
+    filter(
+      muni_id == 308
+    ) |> 
+  mutate(
+    #Convert ZIP to string + add leading zero to make ZIP codes consistently five
+    #digits.
+    ZIP = as.character(str_pad(ZIP, width = 5, side = c("left"), pad = 0)),
+    #Create a complete address column.
+    COMPLETE_ADDR = str_c(STADDR, STCITY_CLEAN, STATE, ZIP, sep = " ")
+  ) |> 
+  #Call the geocoder
+  tidygeocoder::geocode(
+    address = COMPLETE_ADDR,
+    method = "arcgis"
+  )
+
 ```
 
 2.4 Filtering Arts Businesses
@@ -328,6 +378,18 @@ data.axle_arts.spaces <- data.axle_clean |>
   filter(
     NAICS.6 %in% arts_sectors
   )
+
+#Waltham Example 
+data.axle_arts.spaces_waltham <- data.axle_clean.geocoded_waltham  |> 
+  filter(
+    NAICS.6 %in% arts_sectors
+  ) 
+
+saveRDS(
+  data.axle_arts.spaces_waltham,
+  file = "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tabular/intermediary/DA.23_MAPC.cleaned_waltham.rds"
+)
+  
 ```
 
 2.5 Filter for MAPC geography
@@ -355,8 +417,10 @@ saveRDS(
 )
 ```
 
-2.5 MAPC Summary Statistics
+2.6 MAPC Summary Statistics
 ```{r}
+output_path <- "C:/Project_Work/Arts_Culture/Industrial Landuse x Creative Economy/Data/Outputs/"
+
 #Number of Arts Businesses by Municipality
 arts.biz_by.town <- data.axle_arts.spaces_mapc |> 
   group_by(
@@ -372,8 +436,40 @@ arts.biz_by.town <- data.axle_arts.spaces_mapc |>
     desc(businesses)
   )
 
+#Write a csv of the above table
+write.csv(
+  arts.biz_by.town,
+  paste0(output_path, "arts.business_by_muni.csv")
+)
+
+#Create a table demonstrating the top 10 municipalities by number of arts businesses
+tbl.1 <- arts.biz_by.town |>
+  dplyr::slice(1:10) |> 
+  gt() |> 
+  tab_header(
+    title = "NEFA Arts Businesses by Municipality - MAPC"
+  ) |> 
+  cols_label(
+    STCITY_CLEAN = "Municipality",
+    businesses = "Businesses",
+    employment = "Employment",
+    emp.by.biz = "Avg. Employment Per Business"
+  ) |> 
+  fmt_number(
+    columns = c("businesses", "employment"),
+    sep_mark = ",",
+    decimals = 0
+  )
+
+tbl.1 |> 
+  gtsave(
+    filename = paste0(output_path, "arts.biz_by.town.html")
+  )
+
+#Analysis
 #99 of MAPC's 101 municipalities are home to at least one arts business.
 
+#=======================================================================================
 #Number of Arts Businesses by 6-Digit NAICS Code
 arts.biz_by.naics <- data.axle_arts.spaces_mapc |> 
   group_by(
@@ -390,8 +486,42 @@ arts.biz_by.naics <- data.axle_arts.spaces_mapc |>
     desc(businesses)
   )
 
+#Write a csv of the above table
+write.csv(
+  arts.biz_by.naics,
+  paste0(output_path, "arts.business_by_NAICS.csv")
+)
+
+#Create a table demonstrating the top 10 NAICS Codes by number of arts businesses
+tbl.2 <- arts.biz_by.naics |>
+  dplyr::slice(1:10) |> 
+  gt() |> 
+  tab_header(
+    title = "NEFA Art Businesses by NAICS Code - MAPC"
+  ) |> 
+  cols_label(
+    NAICSD = "NAICS",
+    NAICS.6 = "6-Digit NAICS Code",
+    businesses = "Businesses",
+    employment = "Employment",
+    emp.by.biz = "Avg. Employment Per Business"
+  ) |> 
+  fmt_number(
+    columns = c("businesses", "employment"),
+    sep_mark = ",",
+    decimals = 0
+  )
+
+tbl.2 |> 
+  gtsave(
+    filename = paste0(output_path, "arts.biz_by.naics.html")
+  )
+
+#Analysis
 #49 different types of arts business are represented in the MAPC region.
 
+
+#==============================================================================
 #Number of Arts businesses by municipality and 6-Digit NAICS Code
 arts.biz_by.town.by.naics <- data.axle_arts.spaces_mapc |> 
   group_by(
@@ -408,6 +538,16 @@ arts.biz_by.town.by.naics <- data.axle_arts.spaces_mapc |>
   arrange(
     desc(desc(STCITY_CLEAN))
   )
+
+#Write a csv of the above table
+write.csv(
+  arts.biz_by.town.by.naics,
+  paste0(output_path, "arts.business_by_muni_by_NAICS.csv")
+)
+
+#Analysis
+#
+
 ```
 
 2.6 Summary Statistics Maps
