@@ -206,6 +206,22 @@ ggplot() +
 #Here we have an example of the parcel data not having am address (or parcel) that matches the address of the business (56 Dexter Ave vs 32 Dexter Street). That said, 56 Dexter Ave was geocoded to the appropriate location (no 56 Dexter Ave exists.)
 ```
 
+2.4 Creating a Parcel-level Count of Businesses and Employment
+```{r}
+#Table to rejoin to parcel geometries for spatial visualization
+Parcel_Biz <- biz_in_parcel |> 
+  group_by(
+    LOC_ID
+  ) |> 
+  summarise(
+    biz = n(),
+    emp = sum(LOCEMP)
+  ) |> 
+  ungroup() |> 
+  na.omit() |> 
+  st_drop_geometry()
+```
+
 3.0 Tabular Analysis
 ```{r}
 #Use codes
@@ -216,7 +232,7 @@ Biz_by_LUC <- biz_in_parcel |>
   summarise(
     Num_Business = n(),
     Employment = sum(LOCEMP),
-    Avg
+    #Avg
   ) |> 
   ungroup()
 
