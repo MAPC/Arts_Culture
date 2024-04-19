@@ -34,6 +34,12 @@ keys <- mapcdatakeys::all_muni_data_keys |>
     muni_name = stringr::str_to_title(muni_name)
   )
 
+#Define land use code to filter on. 
+ind_landuse_codes <- c("360","361","362","363","364","365","366","367","368","369",
+  "400","401","402","403","404","410","411","412","413","420","421","423","424",
+  "425","426","427","428","430","431","432","433","440","441","442","450","451",
+  "452","230","231")
+
 #Global options to remove scientific notation.
 options(scipen = 999)
 set.seed(351)
@@ -48,6 +54,11 @@ biz_root <- "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Ta
 #Set common projecrions + crs for conversion.
 mass_mainland<-"+proj=lcc +lat_1=42.68333333333333 +lat_2=41.71666666666667 +lat_0=41 +lon_0=-71.5 +x_0=200000 +y_0=750000 +ellps=GRS80 +datum=NAD83 +units=m +no_defs"
 lat_lon_CRS <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
+
+#Load Land Use Code Crosswalk
+LUC_Descriptions <- read.csv(
+  "C:/Project_Work/Local_Data/Parcel_DB/comprehensive_adj_use.code_xwalk.csv"
+)
 ```
 
 1.0 Load relevant data
@@ -206,7 +217,56 @@ ggplot() +
 #Here we have an example of the parcel data not having am address (or parcel) that matches the address of the business (56 Dexter Ave vs 32 Dexter Street). That said, 56 Dexter Ave was geocoded to the appropriate location (no 56 Dexter Ave exists.)
 ```
 
-2.4 Creating a Parcel-level Count of Businesses and Employment
+2.4 Land Use Code Descriptions + Symbology
+```{r}
+biz_in_parcel <- biz_in_parcel |> 
+    mutate(
+    USE_CODE_SYMB = case_when(
+      Min_LUC %in% c("130","131","132") ~ "Residential Vacant",
+      Min_LUC %in% c("101") ~ "Single Family Residence",
+      Min_LUC %in% c("104","105") ~ "Two or Three Family Residences",
+      Min_LUC %in% c("102") ~ "Condominium",
+      Min_LUC %in% c("111", "112") ~ "Apartments with Four or more units",
+      Min_LUC %in% c("121","122","123","124","125") ~ "Group Quarters",
+      Min_LUC %in% c("109","140","107","108","100","110","113","114","115","116","117","118","119","120",
+                        "126","127","133","136","137","138","13C","150","160","167","170","171","172","173",
+                        "176","180","199","106","103") ~ "Residential Other",
+      Min_LUC %in% c("0xx") ~ "Mixed Use",
+      Min_LUC %in% c("390","391","392","393") ~ "Commercial Vacant",
+      Min_LUC %in% c("300","301","302","303","304","305","306","310","311","312","313","314","315","316",
+                        "317","318","321","322","323","324","325","326","330","331","332","333","334","335",
+                        "336","337","338","340","342","350","351","352","353","354","355","356","360","361",
+                        "362","363","364","365","366","367","368","369","370","371","372","373","374","375",
+                        "376","377","380","381","382","383","384","385","386","387","388","389","307","308",
+                        "309","319","31l","320","327","328","329","339","33l","343","344","345","346","347",
+                        "348","349","34R","378","379","394","395","396","399")~ "Commercial",
+      Min_LUC %in% c("440","441","442") ~ "Industrial Vacant",
+      Min_LUC %in% c("400","401","402","403","404","410","411","412","413","420","421","422","423","424",
+                        "425","426","427","428","430","431","432","433","450","451","452","405","406","407",
+                        "408","409","414","415","417","434","435","436","443","444","445","446","465","490",
+                        "499") ~ "Industrial",
+      Min_LUC %in% c("201","202","210","211","220","221","231","261","271","272","273","274","276","277",
+                        "278","279","281","285","290") ~ "Open Space",
+      Min_LUC %in% c("601","602","710","711","712","713","714","715","716","717","718","719","720","801",
+                        "802","803","804","805","806","807","808","809","810","811","812","813","814","815") ~ "Chapter 61 or 61A or 61B Property",
+      Min_LUC %in% c("237","292","600","610","670","700","701","722","730","733","734","736","737","760",
+                        "800") ~ "Other Agricultural or Recreational",
+      Min_LUC %in% c("930","932","933","936","938","973","974","975","980","982","988","991") ~ "Municipal Vacant",
+      Min_LUC %in% c("900","901","910","911","912","913","914","915","916","917","918","919","920","921",
+                        "922","923","924","925","926","927","928","929","931","934","935","937","939","981",
+                        "985","970","971","972","989","992","993","994") ~ "Federal State or Municipal",
+      Min_LUC %in% c("946","950") ~ "Institutional or Exempt Vacant",
+      Min_LUC %in% c("940","941","942","943","944","945","945","947","951","952","953","954","955","956",
+                        "957","957","958","959","960","961","962","995","996","997","990") ~ "Institutional or Exempt",
+      Min_LUC %in% c("902","903","904","905","906","907","908","909","948","949","963","965","966","968",
+                        "969","976","977","978","979","983","986","987","998","999") ~ "Tax Exempt Other"
+    ),
+    USE_CODE_SYMB = replace_na(USE_CODE_SYMB, "Unknown")
+  )
+```
+
+
+2.5 Creating a Parcel-level Count of Businesses and Employment
 ```{r}
 #Table to rejoin to parcel geometries for spatial visualization
 Parcel_Biz <- biz_in_parcel |> 
@@ -222,24 +282,80 @@ Parcel_Biz <- biz_in_parcel |>
   st_drop_geometry()
 ```
 
+
 3.0 Tabular Analysis
 ```{r}
-#Use codes
+output_path <- "C:/Project_Work/Arts_Culture/Industrial Landuse x Creative Economy/Data/Outputs/"
+
+#Business by Minimum land use codes
 Biz_by_LUC <- biz_in_parcel |> 
   group_by(
-    Min_LUC
+    USE_CODE_SYMB,
   ) |> 
   summarise(
     Num_Business = n(),
     Employment = sum(LOCEMP),
-    #Avg
+    Avg_emp = round(Employment/Num_Business, 2)
   ) |> 
-  ungroup()
+  ungroup() |> 
+  na.omit() |> 
+  st_drop_geometry() |> 
+  arrange(
+    desc(Num_Business)
+  )
 
+write.csv(
+  Biz_by_LUC,
+  paste0(output_path, "businesses_by_LUC.type.csv")
+)
 
-Biz_by_LUC_by_NAICS
+#Businesses by land use codes and 6-Digit NAICS
+Biz_by_LUC_by_NAICS <- biz_in_parcel |> 
+  group_by(
+    USE_CODE_SYMB,
+    NAICSD,
+    NAICS.6
+  ) |> 
+  summarise(
+    Num_Business = n(),
+    Employment = sum(LOCEMP),
+    Avg_emp = round(Employment/Num_Business, 2)
+  ) |> 
+  ungroup() |> 
+  na.omit() |> 
+  st_drop_geometry() |> 
+  arrange(
+    desc(Num_Business)
+  )
 
-Biz_by_LUC_Muni
+write.csv(
+  Biz_by_LUC_by_NAICS,
+  paste0(output_path, "businesses_by_LUC.type_by_NAICS.csv")
+)
+
+#Businesses by Land Use Code and Municipality
+Biz_by_LUC_Muni <- biz_in_parcel |> 
+  group_by(
+    USE_CODE_SYMB,
+    muni_name
+  ) |> 
+  summarise(
+    Num_Business = n(),
+    Employment = sum(LOCEMP),
+    Avg_emp = round(Employment/Num_Business, 2)
+  ) |> 
+  ungroup() |> 
+  na.omit() |> 
+  st_drop_geometry() |> 
+  arrange(
+    desc(Num_Business)
+  )
+
+write.csv(
+ Biz_by_LUC_Muni,
+  paste0(output_path, "businesses_by_LUC.type_by_Muni.csv")
+)
+
 ```
 
 4.0 Spatial Analysis
