@@ -329,6 +329,11 @@ for (i in muni_id){
   
 }
 
+saveRDS(
+  data.axle_clean.geocoded,
+  file = "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tabular/intermediary/DA.23_MAPC.cleaned.rds"
+)
+
 data.axle_clean.geocoded_waltham <- data.axle_clean  |> 
     filter(
       muni_id == 308
@@ -374,7 +379,7 @@ arts_sectors <- c(arch.and.design, art.retail, art.arch.manu, culture.pres,mach.
                   wholesale.art.store)
 
 #Filter for the arts related businesses.
-data.axle_arts.spaces <- data.axle_clean |> 
+data.axle_arts.spaces <- data.axle_clean.geocoded |> 
   filter(
     NAICS.6 %in% arts_sectors
   )
@@ -407,13 +412,13 @@ data.axle_arts.spaces_mapc <- data.axle_arts.spaces |>
 ```{r}
 write.csv(
   data.axle_arts.spaces_mapc,
-  "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tabular/intermediary/DA.23_MAPC.cleaned.csv",
+  "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tabular/intermediary/DA.23_MAPC.cleaned.geocoded.csv",
   row.names = F
 )
 
 saveRDS(
   data.axle_arts.spaces_mapc,
-  file = "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tabular/intermediary/DA.23_MAPC.cleaned.rds"
+  file = "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tabular/intermediary/DA.23_MAPC.cleaned.geocoded.rds"
 )
 ```
 
