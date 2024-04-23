@@ -328,29 +328,6 @@ for (i in muni_id){
   rm(tmp)
   
 }
-
-saveRDS(
-  data.axle_clean.geocoded,
-  file = "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tabular/intermediary/DA.23_MAPC.cleaned.rds"
-)
-
-data.axle_clean.geocoded_waltham <- data.axle_clean  |> 
-    filter(
-      muni_id == 308
-    ) |> 
-  mutate(
-    #Convert ZIP to string + add leading zero to make ZIP codes consistently five
-    #digits.
-    ZIP = as.character(str_pad(ZIP, width = 5, side = c("left"), pad = 0)),
-    #Create a complete address column.
-    COMPLETE_ADDR = str_c(STADDR, STCITY_CLEAN, STATE, ZIP, sep = " ")
-  ) |> 
-  #Call the geocoder
-  tidygeocoder::geocode(
-    address = COMPLETE_ADDR,
-    method = "arcgis"
-  )
-
 ```
 
 2.4 Filtering Arts Businesses
@@ -379,22 +356,10 @@ arts_sectors <- c(arch.and.design, art.retail, art.arch.manu, culture.pres,mach.
                   wholesale.art.store)
 
 #Filter for the arts related businesses.
-data.axle_arts.spaces <- data.axle_clean.geocoded |> 
+data.axle_arts.spaces <- data.axle_clean |> 
   filter(
     NAICS.6 %in% arts_sectors
   )
-
-#Waltham Example 
-data.axle_arts.spaces_waltham <- data.axle_clean.geocoded_waltham  |> 
-  filter(
-    NAICS.6 %in% arts_sectors
-  ) 
-
-saveRDS(
-  data.axle_arts.spaces_waltham,
-  file = "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tabular/intermediary/DA.23_MAPC.cleaned_waltham.rds"
-)
-  
 ```
 
 2.5 Filter for MAPC geography
@@ -407,18 +372,51 @@ data.axle_arts.spaces_mapc <- data.axle_arts.spaces |>
 
 ```
 
+2.5.1 Geocode Arts Spaces
+```{r}
+#Create a concatenated address field: Street Address, City, State, ZIP Code
+data.axle_arts.spaces_mapc.geocoded <- data.frame()
+muni_id <- unique(data.axle_arts.spaces_mapc$muni_id)
 
-2.5.1 Write cleaned Business data
+for (i in muni_id){
+  
+  tmp <- data.axle_arts.spaces_mapc |> 
+    filter(
+      muni_id == i
+    ) |> 
+    mutate(
+    #Convert ZIP to string + add leading zero to make ZIP codes consistently five
+    #digits.
+    ZIP = as.character(str_pad(ZIP, width = 5, side = c("left"), pad = 0)),
+    #Create a complete address column.
+    COMPLETE_ADDR = str_c(STADDR, STCITY_CLEAN, STATE, ZIP, sep = " ")
+    ) |> 
+    #Call the geocoder
+    tidygeocoder::geocode(
+      address = COMPLETE_ADDR,
+      method = "arcgis"
+    )
+  
+  data.axle_arts.spaces_mapc.geocoded <- bind_rows(data.axle_arts.spaces_mapc.geocoded, tmp)
+  
+  print(paste0("Finished Geocoding Municipality:", i))
+  
+  rm(tmp)
+}
+```
+
+
+2.5.2 Write cleaned Business data
 ```{r}
 write.csv(
-  data.axle_arts.spaces_mapc,
-  "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tabular/intermediary/DA.23_MAPC.cleaned.geocoded.csv",
+  data.axle_arts.spaces_mapc.geocoded,
+  "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tabular/intermediary/DA.23_ArtsSpaces.MAPC.cleaned.geocoded.csv",
   row.names = F
 )
 
 saveRDS(
-  data.axle_arts.spaces_mapc,
-  file = "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tabular/intermediary/DA.23_MAPC.cleaned.geocoded.rds"
+  data.axle_arts.spaces_mapc.geocoded,
+  file = "C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Tabular/intermediary/DA.23_ArtsSpaces.MAPC.cleaned.geocoded.rds"
 )
 ```
 
