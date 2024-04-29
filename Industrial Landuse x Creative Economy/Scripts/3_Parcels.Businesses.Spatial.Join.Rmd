@@ -345,6 +345,7 @@ tbl.1 |>
     filename = paste0(output_path, "arts.biz_by.town.html")
   )
 
+#Create a bar chart of Top 10 municipalities by number of businsesses
 bar_graph.1 <- arts.biz_by.town |> 
   arrange(
     desc(businesses)
@@ -366,8 +367,10 @@ bar_graph.1 <- arts.biz_by.town |>
     axis.text.y = element_text(color = "black")
   )
 
+#Check it in terminal
 bar_graph.1
 
+#Save
 ggsave(
   filename = "top10_municipalities_by_arts.businesses.jpeg",
   plot = bar_graph.1,
@@ -375,6 +378,7 @@ ggsave(
   path = output_path
 )
 
+#Create a bar chart of Top 10 municipalities by employment
 bar_graph.2 <- arts.biz_by.town |> 
   arrange(
     desc(employment)
@@ -405,6 +409,7 @@ ggsave(
   path = output_path
 )
 
+#Create a bar chart of Top 10 municipalities by avg. employment per business
 bar_graph.3 <- arts.biz_by.town |> 
   arrange(
     desc(emp.by.biz)
@@ -485,6 +490,101 @@ tbl.2 |>
   gtsave(
     filename = paste0(output_path, "arts.biz_by.naics.html")
   )
+
+#Create a bar chart of Top 10 municipalities by number of businsesses
+bar_graph.1 <- arts.biz_by.naics |> 
+  arrange(
+    desc(businesses)
+  ) |> 
+  dplyr::slice(1:10) |> 
+  ggplot(aes(x = reorder(NAICSD, businesses), y = businesses)) +
+  geom_bar(stat = "identity", color = "black", fill = "steelblue") +
+  geom_text(aes(label = scales::comma(businesses)), vjust = -0.3, size = 3.5) +
+  scale_x_discrete(limits = rev) +
+  scale_y_continuous(label = scales::comma) +
+  labs(
+    title = "Arts Businesses by NAICS (Top 10)",
+    x = "NAICS Description",
+    y = "Number of Businesses"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(color = "black", angle = 90, vjust = 0.5, hjust = 1),
+    axis.text.y = element_text(color = "black")
+  )
+
+#Check it in terminal
+bar_graph.1
+
+#Save
+ggsave(
+  filename = "top10_naics_by_arts.businesses.jpeg",
+  plot = bar_graph.1,
+  device = "jpeg",
+  path = output_path
+)
+
+#Create a bar chart of Top 10 municipalities by employment
+bar_graph.2 <- arts.biz_by.naics |> 
+  arrange(
+    desc(employment)
+  ) |> 
+  dplyr::slice(1:10) |> 
+  ggplot(aes(x = reorder(NAICSD, employment), y = employment)) +
+  geom_bar(stat = "identity", color = "black", fill = "lavender") +
+  geom_text(aes(label = scales::comma(employment)), vjust = -0.3, size = 3.5) +
+  scale_x_discrete(limits = rev) +
+  scale_y_continuous(label = scales::comma) +
+  labs(
+    title = "Arts Employment by NAICS (Top 10)",
+    x = "NAICS Description",
+    y = "Number of Employees"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.text.y = element_text(color = "black")
+  )
+
+bar_graph.2
+
+ggsave(
+  filename = "top10_naics_by_arts.employment.jpeg",
+  plot = bar_graph.2,
+  device = "jpeg",
+  path = output_path
+)
+
+#Create a bar chart of Top 10 municipalities by avg. employment per business
+bar_graph.3 <- arts.biz_by.naics |> 
+  arrange(
+    desc(emp.by.biz)
+  ) |> 
+  dplyr::slice(1:10) |> 
+  ggplot(aes(x = reorder(NAICSD, emp.by.biz), y = emp.by.biz)) +
+  geom_bar(stat = "identity", color = "black", fill = "lightgreen") +
+  geom_text(aes(label = scales::comma(emp.by.biz)), vjust = -0.3, size = 3.5) +
+  scale_x_discrete(limits = rev) +
+  scale_y_continuous(label = scales::comma) +
+  labs(
+    title = "Avg. Arts Employment Per Businesses by Municipality (Top 10)",
+    x = "NAICS Description",
+    y = "Avg. Employment Per Businesses"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.text.y = element_text(color = "black")
+  )
+
+bar_graph.3
+
+ggsave(
+  filename = "top10_NAICS_by_arts.employmentbybusiness.jpeg",
+  plot = bar_graph.3,
+  device = "jpeg",
+  path = output_path
+)
 
 #Analysis
 #49 different types of arts business are represented in the MAPC region.
