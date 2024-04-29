@@ -74,8 +74,13 @@ mapc_parcels <- st_read(
 #Load the business data
 #Convert business point data to a a spatial object (sf object)
 mapc_biz.spatial <- readRDS(
-  paste0(biz_root, "DA.23_MAPC.cleaned_waltham.rds")
+  paste0(biz_root, "DA.23_ArtsSpaces.MAPC.cleaned.geocoded.rds")
 ) |> 
+  rowwise() |> 
+  mutate(
+    lat = tidyr::replace_na(lat, LATITUDE),
+    long = tidyr::replace_na(long, LONGITUDE)
+  ) |> 
   #Converting the non-spatial data into a spatial object.
   st_as_sf(
     #coords = c("LONGITUDE", "LATITUDE"),
@@ -89,7 +94,8 @@ mapc_biz.spatial <- readRDS(
     crs = st_crs(mapc_parcels)
   )
 ```
-2.4 Land Use Code Descriptions + Symbology
+
+2.0 Land Use Code Descriptions + Symbology
 ```{r}
 mapc_parcels <- mapc_parcels |> 
     mutate(
@@ -137,7 +143,7 @@ mapc_parcels <- mapc_parcels |>
   )
 ```
 
-2.0 Putting the points into the polygons
+2.1 Putting the points into the polygons
 ```{r}
 #Testing that the points are projected similar to the polygons.
 #Using Stow as an example because it's small + has only a few points
@@ -157,13 +163,15 @@ ggplot()+
   theme_minimal()
 
 #Hell yeah - the points are in the polygons!
+#Lets remove the test dataframes
+rm(biz_test, parcel_test)
 
 #Now lets do the point in polygon join for the full dataset
 biz_in_parcel <- st_join(mapc_biz.spatial, mapc_parcels, join = st_within)
 #parcel_w_biz <- st_join(mapc_parcels, mapc_biz.spatial, join = st_within)
 ```
 
-2.1 QA/QC SMall Muni Check
+2.2 QA/QC SMall Muni Check
 ```{r}
 address_check <- biz_in_parcel |> 
   select(
@@ -204,7 +212,7 @@ ggplot()+
   
 ```
 
-2.2 Medium Muni Check
+2.3 Medium Muni Check
 ```{r}
 #Dataset to check address matching
 address_check <- biz_in_parcel |> 
@@ -264,11 +272,7 @@ ggplot() +
 
 #Here we have an example of the parcel data not having am address (or parcel) that matches the address of the business (56 Dexter Ave vs 32 Dexter Street). That said, 56 Dexter Ave was geocoded to the appropriate location (no 56 Dexter Ave exists.)
 ```
-
-
-
-
-2.5 Creating a Parcel-level Count of Businesses and Employment
+2.4 Creating a Parcel-level Count of Businesses and Employment
 ```{r}
 #Table to rejoin to parcel geometries for spatial visualization
 Parcel_Biz <- biz_in_parcel |> 
@@ -277,7 +281,8 @@ Parcel_Biz <- biz_in_parcel |>
   ) |> 
   summarise(
     biz = n(),
-    emp = sum(LOCEMP)
+    emp = sum(LOCEMP),
+    epb = emp/biz
   ) |> 
   ungroup() |> 
   na.omit() |> 
@@ -286,8 +291,244 @@ Parcel_Biz <- biz_in_parcel |>
 
 
 3.0 Tabular Analysis
+3.1 Arts Businesses by Town and NAICS
+```{r}
+#Set output path for the tables and visualizations associated with this analysis
+output_path <- "C:/Project_Work/Arts_Culture/Industrial Landuse x Creative Economy/Data/Outputs/"
+
+#Make a non-sf object copy of the spatialized arts business data to more
+#easily facilitate tabular analysis.
+data.axle_arts.spaces_mapc <- mapc_biz.spatial |> st_drop_geometry()
+
+#Number of Arts Businesses by Municipality
+arts.biz_by.town <- data.axle_arts.spaces_mapc |> 
+  group_by(
+    STCITY_CLEAN
+  ) |> 
+  summarise(
+    businesses = n(),
+    employment = sum(LOCEMP),
+    emp.by.biz = round(employment/businesses,2)
+  ) |> 
+  ungroup() |> 
+  arrange(
+    desc(businesses)
+  )
+
+#Write a csv of the above table
+write.csv(
+  arts.biz_by.town,
+  paste0(output_path, "arts.business_by_muni.csv")
+)
+
+#Create a table demonstrating the top 10 municipalities by number of arts businesses
+tbl.1 <- arts.biz_by.town |>
+  dplyr::slice(1:10) |> 
+  gt() |> 
+  tab_header(
+    title = "NEFA Arts Businesses by Municipality - MAPC"
+  ) |> 
+  cols_label(
+    STCITY_CLEAN = "Municipality",
+    businesses = "Businesses",
+    employment = "Employment",
+    emp.by.biz = "Avg. Employment Per Business"
+  ) |> 
+  fmt_number(
+    columns = c("businesses", "employment"),
+    sep_mark = ",",
+    decimals = 0
+  )
+
+tbl.1 |> 
+  gtsave(
+    filename = paste0(output_path, "arts.biz_by.town.html")
+  )
+
+bar_graph.1 <- arts.biz_by.town |> 
+  arrange(
+    desc(businesses)
+  ) |> 
+  dplyr::slice(1:10) |> 
+  ggplot(aes(x = reorder(STCITY_CLEAN, businesses), y = businesses)) +
+  geom_bar(stat = "identity", color = "black", fill = "steelblue") +
+  geom_text(aes(label = scales::comma(businesses)), vjust = -0.3, size = 3.5) +
+  scale_x_discrete(limits = rev) +
+  scale_y_continuous(label = scales::comma) +
+  labs(
+    title = "Arts Businesses by Municipality (Top 10)",
+    x = "Municipality",
+    y = "Number of Businesses"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.text.y = element_text(color = "black")
+  )
+
+bar_graph.1
+
+ggsave(
+  filename = "top10_municipalities_by_arts.businesses.jpeg",
+  plot = bar_graph.1,
+  device = "jpeg",
+  path = output_path
+)
+
+bar_graph.2 <- arts.biz_by.town |> 
+  arrange(
+    desc(employment)
+  ) |> 
+  dplyr::slice(1:10) |> 
+  ggplot(aes(x = reorder(STCITY_CLEAN, employment), y = employment)) +
+  geom_bar(stat = "identity", color = "black", fill = "lavender") +
+  geom_text(aes(label = scales::comma(employment)), vjust = -0.3, size = 3.5) +
+  scale_x_discrete(limits = rev) +
+  scale_y_continuous(label = scales::comma) +
+  labs(
+    title = "Arts Employment by Municipality (Top 10)",
+    x = "Municipality",
+    y = "Number of Employees"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.text.y = element_text(color = "black")
+  )
+
+bar_graph.2
+
+ggsave(
+  filename = "top10_municipalities_by_arts.employment.jpeg",
+  plot = bar_graph.2,
+  device = "jpeg",
+  path = output_path
+)
+
+bar_graph.3 <- arts.biz_by.town |> 
+  arrange(
+    desc(emp.by.biz)
+  ) |> 
+  dplyr::slice(1:10) |> 
+  ggplot(aes(x = reorder(STCITY_CLEAN, emp.by.biz), y = emp.by.biz)) +
+  geom_bar(stat = "identity", color = "black", fill = "lightgreen") +
+  geom_text(aes(label = scales::comma(emp.by.biz)), vjust = -0.3, size = 3.5) +
+  scale_x_discrete(limits = rev) +
+  scale_y_continuous(label = scales::comma) +
+  labs(
+    title = "Avg. Arts Employment Per Businesses by Municipality (Top 10)",
+    x = "Municipality",
+    y = "Avg. Employment Per Businesses"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.text.y = element_text(color = "black")
+  )
+
+bar_graph.3
+
+ggsave(
+  filename = "top10_municipalities_by_arts.employmentbybusiness.jpeg",
+  plot = bar_graph.3,
+  device = "jpeg",
+  path = output_path
+)
+
+#Analysis
+#99 of MAPC's 101 municipalities are home to at least one arts business.
+
+#=======================================================================================
+#Number of Arts Businesses by 6-Digit NAICS Code
+arts.biz_by.naics <- data.axle_arts.spaces_mapc |> 
+  group_by(
+    NAICSD,
+    NAICS.6
+  ) |> 
+  summarise(
+    businesses = n(),
+    employment = sum(LOCEMP),
+    emp.by.biz = round(employment/businesses,2)
+  ) |> 
+  ungroup() |> 
+  arrange(
+    desc(businesses)
+  )
+
+#Write a csv of the above table
+write.csv(
+  arts.biz_by.naics,
+  paste0(output_path, "arts.business_by_NAICS.csv")
+)
+
+#Create a table demonstrating the top 10 NAICS Codes by number of arts businesses
+tbl.2 <- arts.biz_by.naics |>
+  dplyr::slice(1:10) |> 
+  gt() |> 
+  tab_header(
+    title = "NEFA Art Businesses by NAICS Code - MAPC"
+  ) |> 
+  cols_label(
+    NAICSD = "NAICS",
+    NAICS.6 = "6-Digit NAICS Code",
+    businesses = "Businesses",
+    employment = "Employment",
+    emp.by.biz = "Avg. Employment Per Business"
+  ) |> 
+  fmt_number(
+    columns = c("businesses", "employment"),
+    sep_mark = ",",
+    decimals = 0
+  )
+
+tbl.2 |> 
+  gtsave(
+    filename = paste0(output_path, "arts.biz_by.naics.html")
+  )
+
+#Analysis
+#49 different types of arts business are represented in the MAPC region.
+
+
+#==============================================================================
+#Number of Arts businesses by municipality and 6-Digit NAICS Code
+arts.biz_by.town.by.naics <- data.axle_arts.spaces_mapc |> 
+  group_by(
+    STCITY_CLEAN,
+    NAICSD,
+    NAICS.6
+  ) |> 
+  summarise(
+    businesses = n(),
+    employment = sum(LOCEMP),
+    emp.by.biz = round(employment/businesses,2)
+  ) |> 
+  ungroup() |> 
+  arrange(
+    desc(desc(STCITY_CLEAN))
+  )
+
+#Write a csv of the above table
+write.csv(
+  arts.biz_by.town.by.naics,
+  paste0(output_path, "arts.business_by_muni_by_NAICS.csv")
+)
+
+#Analysis
+#
+```
+
+3.2 Arts Businesses by Land Use Codes
 ```{r}
 output_path <- "C:/Project_Work/Arts_Culture/Industrial Landuse x Creative Economy/Data/Outputs/"
+
+#Density plot of employment of arts businesses in parcel
+print(summary(biz_in_parcel |> select()))
+
+biz_in_parcel |> 
+  ggplot(aes(x = LOCEMP)) +
+  geom_density() + 
+  theme_minimal()
 
 #Business by Minimum land use codes
 Biz_by_LUC <- biz_in_parcel |> 
@@ -365,7 +606,7 @@ write.csv(
 #Lets visualize the parcels that do have arts businesses in them
 waltham_parcels_full <- mapc_parcels |> 
   filter(
-    CITY == "Waltham"
+    CITY == "Somerville"
   ) |> 
   left_join(
     Parcel_Biz,

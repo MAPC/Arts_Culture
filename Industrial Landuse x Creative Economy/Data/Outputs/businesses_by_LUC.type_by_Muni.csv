@@ -1,11 +1,744 @@
 "","USE_CODE_SYMB","muni_name","Num_Business","Employment","Avg_emp"
-"1","Commercial","Waltham",71,941,13.25
-"2","Industrial","Waltham",19,105,5.53
-"3","Mixed Use","Waltham",15,54,3.6
-"4","Single Family Residence","Waltham",13,67,5.15
-"5","Tax Exempt Other","Waltham",9,158,17.56
-"6","Apartments with Four or more units","Waltham",6,20,3.33
-"7","Condominium","Waltham",6,22,3.67
-"8","Two or Three Family Residences","Waltham",4,13,3.25
-"9","Federal State or Municipal","Waltham",2,24,12
-"10","Commercial Vacant","Waltham",1,3,3
+"1","Commercial","Boston",837,13204,15.78
+"2","Condominium","Boston",237,1089,4.59
+"3","Mixed Use","Boston",236,1719,7.28
+"4","Two or Three Family Residences","Boston",217,687,3.17
+"5","Commercial","Cambridge",134,1273,9.5
+"6","Single Family Residence","Boston",130,548,4.22
+"7","Tax Exempt Other","Boston",99,2989,30.19
+"8","Commercial","Newton",81,539,6.65
+"9","Unknown","Boston",77,523,6.79
+"10","Commercial","Waltham",71,941,13.25
+"11","Single Family Residence","Newton",68,193,2.84
+"12","Condominium","Cambridge",67,180,2.69
+"13","Federal State or Municipal","Boston",67,907,13.54
+"14","Apartments with Four or more units","Boston",59,206,3.49
+"15","Institutional or Exempt","Cambridge",50,1331,26.62
+"16","Commercial","Woburn",48,1287,26.81
+"17","Commercial","Quincy",46,305,6.63
+"18","Commercial","Somerville",45,412,9.16
+"19","Commercial","Watertown",44,449,10.2
+"20","Industrial","Woburn",44,428,9.73
+"21","Condominium","Brookline",41,200,4.88
+"22","Two or Three Family Residences","Cambridge",40,114,2.85
+"23","Commercial","Natick",39,290,7.44
+"24","Commercial","Wellesley",39,292,7.49
+"25","Industrial","Boston",37,601,16.24
+"26","Single Family Residence","Framingham",35,77,2.2
+"27","Commercial","Peabody",34,150,4.41
+"28","Mixed Use","Beverly",34,133,3.91
+"29","Single Family Residence","Cambridge",34,103,3.03
+"30","Apartments with Four or more units","Cambridge",32,78,2.44
+"31","Commercial","Braintree",32,242,7.56
+"32","Commercial","Concord",32,369,11.53
+"33","Commercial","Salem",32,438,13.69
+"34","Commercial","Hingham",30,152,5.07
+"35","Mixed Use","Cambridge",29,105,3.62
+"36","Single Family Residence","Lexington",29,78,2.69
+"37","Single Family Residence","Natick",29,65,2.24
+"38","Single Family Residence","Concord",27,198,7.33
+"39","Single Family Residence","Wellesley",27,79,2.93
+"40","Commercial","Norwood",26,404,15.54
+"41","Commercial","Lexington",25,188,7.52
+"42","Single Family Residence","Arlington",25,53,2.12
+"43","Commercial","Weymouth",24,123,5.12
+"44","Industrial","Somerville",24,257,10.71
+"45","Two or Three Family Residences","Somerville",24,73,3.04
+"46","Commercial","Framingham",23,200,8.7
+"47","Commercial","Needham",23,103,4.48
+"48","Single Family Residence","Brookline",23,111,4.83
+"49","Single Family Residence","Hingham",23,54,2.35
+"50","Single Family Residence","Needham",23,54,2.35
+"51","Single Family Residence","Weymouth",23,53,2.3
+"52","Commercial","Arlington",22,87,3.95
+"53","Commercial","Brookline",22,261,11.86
+"54","Commercial","Marlborough",22,213,9.68
+"55","Single Family Residence","Marblehead",22,46,2.09
+"56","Single Family Residence","Melrose",22,69,3.14
+"57","Commercial","Stoneham",21,77,3.67
+"58","Commercial","Wakefield",21,248,11.81
+"59","Commercial","Burlington",20,873,43.65
+"60","Commercial","Sudbury",20,102,5.1
+"61","Single Family Residence","Lincoln",20,52,2.6
+"62","Single Family Residence","Marlborough",20,96,4.8
+"63","Single Family Residence","Marshfield",20,48,2.4
+"64","Single Family Residence","Medford",20,53,2.65
+"65","Industrial","Waltham",19,105,5.53
+"66","Single Family Residence","Sudbury",19,87,4.58
+"67","Commercial","Ipswich",18,96,5.33
+"68","Commercial","Lynn",18,130,7.22
+"69","Industrial","Wilmington",18,550,30.56
+"70","Residential Other","Cambridge",18,129,7.17
+"71","Single Family Residence","Beverly",18,33,1.83
+"72","Single Family Residence","Gloucester",18,55,3.06
+"73","Single Family Residence","Lynnfield",18,45,2.5
+"74","Single Family Residence","Quincy",18,50,2.78
+"75","Single Family Residence","Reading",18,49,2.72
+"76","Single Family Residence","Saugus",18,36,2
+"77","Commercial","Milford",17,54,3.18
+"78","Industrial","Newton",17,95,5.59
+"79","Single Family Residence","Braintree",17,27,1.59
+"80","Commercial","Belmont",16,84,5.25
+"81","Commercial","Beverly",16,147,9.19
+"82","Commercial","Danvers",16,118,7.38
+"83","Commercial","Marblehead",16,46,2.88
+"84","Single Family Residence","Acton",16,77,4.81
+"85","Single Family Residence","Hopkinton",16,36,2.25
+"86","Single Family Residence","Milton",16,48,3
+"87","Single Family Residence","Stoneham",16,26,1.62
+"88","Two or Three Family Residences","Lynn",16,35,2.19
+"89","Two or Three Family Residences","Newton",16,42,2.62
+"90","Commercial","Medford",15,147,9.8
+"91","Commercial","North Reading",15,40,2.67
+"92","Commercial","Stoughton",15,191,12.73
+"93","Commercial","Winchester",15,211,14.07
+"94","Mixed Use","Waltham",15,54,3.6
+"95","Residential Other","Boston",15,83,5.53
+"96","Single Family Residence","Canton",15,42,2.8
+"97","Single Family Residence","Westwood",15,39,2.6
+"98","Single Family Residence","Winchester",15,44,2.93
+"99","Commercial","Dedham",14,82,5.86
+"100","Commercial","Franklin",14,255,18.21
+"101","Condominium","Salem",14,49,3.5
+"102","Condominium","Somerville",14,41,2.93
+"103","Industrial","Framingham",14,53,3.79
+"104","Industrial","Hudson",14,131,9.36
+"105","Mixed Use","Brookline",14,69,4.93
+"106","Single Family Residence","Carlisle",14,52,3.71
+"107","Single Family Residence","Franklin",14,29,2.07
+"108","Single Family Residence","Medfield",14,24,1.71
+"109","Unknown","Cambridge",14,64,4.57
+"110","Commercial","Canton",13,70,5.38
+"111","Commercial","Everett",13,112,8.62
+"112","Commercial","Gloucester",13,45,3.46
+"113","Commercial","Malden",13,36,2.77
+"114","Commercial","Randolph",13,104,8
+"115","Commercial","Rockland",13,88,6.77
+"116","Federal State or Municipal","Cambridge",13,486,37.38
+"117","Group Quarters","Boston",13,151,11.62
+"118","Industrial","Watertown",13,131,10.08
+"119","Mixed Use","Revere",13,37,2.85
+"120","Single Family Residence","Belmont",13,39,3
+"121","Single Family Residence","Medway",13,31,2.38
+"122","Single Family Residence","North Reading",13,22,1.69
+"123","Single Family Residence","Waltham",13,67,5.15
+"124","Two or Three Family Residences","Malden",13,32,2.46
+"125","Commercial","Acton",12,64,5.33
+"126","Commercial","Hanover",12,25,2.08
+"127","Federal State or Municipal","Brookline",12,209,17.42
+"128","Industrial","Norwood",12,203,16.92
+"129","Industrial","Salem",12,56,4.67
+"130","Single Family Residence","Bolton",12,21,1.75
+"131","Single Family Residence","Burlington",12,32,2.67
+"132","Single Family Residence","Cohasset",12,34,2.83
+"133","Single Family Residence","Dedham",12,29,2.42
+"134","Single Family Residence","Duxbury",12,32,2.67
+"135","Single Family Residence","Holliston",12,34,2.83
+"136","Single Family Residence","Scituate",12,20,1.67
+"137","Single Family Residence","Sharon",12,20,1.67
+"138","Single Family Residence","Somerville",12,33,2.75
+"139","Single Family Residence","Wayland",12,28,2.33
+"140","Single Family Residence","Woburn",12,26,2.17
+"141","Commercial","Foxborough",11,137,12.45
+"142","Condominium","Newton",11,30,2.73
+"143","Federal State or Municipal","Concord",11,159,14.45
+"144","Industrial","Franklin",11,94,8.55
+"145","Industrial","Peabody",11,147,13.36
+"146","Industrial","Walpole",11,31,2.82
+"147","Institutional or Exempt","Newton",11,130,11.82
+"148","Single Family Residence","Bedford",11,15,1.36
+"149","Single Family Residence","Danvers",11,36,3.27
+"150","Single Family Residence","Foxborough",11,21,1.91
+"151","Single Family Residence","Malden",11,32,2.91
+"152","Single Family Residence","Norwood",11,17,1.55
+"153","Single Family Residence","Sherborn",11,28,2.55
+"154","Single Family Residence","Swampscott",11,19,1.73
+"155","Single Family Residence","Watertown",11,25,2.27
+"156","Single Family Residence","Weston",11,21,1.91
+"157","Two or Three Family Residences","Medford",11,29,2.64
+"158","Federal State or Municipal","Quincy",10,83,8.3
+"159","Industrial","Braintree",10,37,3.7
+"160","Industrial","Malden",10,49,4.9
+"161","Industrial","Rockland",10,35,3.5
+"162","Institutional or Exempt","Boston",10,328,32.8
+"163","Mixed Use","Newton",10,74,7.4
+"164","Mixed Use","Somerville",10,39,3.9
+"165","Single Family Residence","Ashland",10,16,1.6
+"166","Single Family Residence","Pembroke",10,18,1.8
+"167","Single Family Residence","Stoughton",10,24,2.4
+"168","Single Family Residence","Walpole",10,14,1.4
+"169","Tax Exempt Other","Waltham",10,162,16.2
+"170","Two or Three Family Residences","Arlington",10,24,2.4
+"171","Commercial","Melrose",9,47,5.22
+"172","Commercial","Middleton",9,54,6
+"173","Commercial","Norwell",9,60,6.67
+"174","Commercial","Saugus",9,31,3.44
+"175","Industrial","Marlborough",9,72,8
+"176","Industrial","Pembroke",9,77,8.56
+"177","Industrial","Stoughton",9,55,6.11
+"178","Institutional or Exempt","Gloucester",9,85,9.44
+"179","Mixed Use","Salem",9,20,2.22
+"180","Single Family Residence","Hanover",9,62,6.89
+"181","Single Family Residence","Norwell",9,15,1.67
+"182","Single Family Residence","Rockport",9,23,2.56
+"183","Single Family Residence","Wakefield",9,26,2.89
+"184","Commercial","Revere",8,72,9
+"185","Commercial","Wayland",8,100,12.5
+"186","Condominium","Arlington",8,21,2.62
+"187","Industrial","Cambridge",8,37,4.62
+"188","Industrial","Everett",8,135,16.88
+"189","Institutional or Exempt","Concord",8,161,20.12
+"190","Institutional or Exempt","Duxbury",8,58,7.25
+"191","Institutional or Exempt","Lexington",8,153,19.12
+"192","Mixed Use","Framingham",8,9,1.12
+"193","Single Family Residence","Dover",8,14,1.75
+"194","Single Family Residence","Hudson",8,21,2.62
+"195","Single Family Residence","Milford",8,17,2.12
+"196","Single Family Residence","Peabody",8,16,2
+"197","Single Family Residence","Salem",8,20,2.5
+"198","Single Family Residence","Southborough",8,34,4.25
+"199","Single Family Residence","Wenham",8,23,2.88
+"200","Single Family Residence","Wilmington",8,18,2.25
+"201","Two or Three Family Residences","Belmont",8,57,7.12
+"202","Two or Three Family Residences","Everett",8,17,2.12
+"203","Two or Three Family Residences","Gloucester",8,12,1.5
+"204","Two or Three Family Residences","Watertown",8,16,2
+"205","Commercial","Reading",7,38,5.43
+"206","Commercial","Walpole",7,19,2.71
+"207","Commercial","Wrentham",7,15,2.14
+"208","Condominium","Beverly",7,132,18.86
+"209","Federal State or Municipal","Arlington",7,260,37.14
+"210","Federal State or Municipal","Framingham",7,61,8.71
+"211","Industrial","Canton",7,157,22.43
+"212","Industrial","Gloucester",7,54,7.71
+"213","Industrial","Holliston",7,16,2.29
+"214","Mixed Use","Marblehead",7,20,2.86
+"215","Mixed Use","Wellesley",7,25,3.57
+"216","Single Family Residence","Hull",7,16,2.29
+"217","Single Family Residence","Ipswich",7,14,2
+"218","Single Family Residence","Lynn",7,15,2.14
+"219","Single Family Residence","Winthrop",7,15,2.14
+"220","Tax Exempt Other","Lincoln",7,112,16
+"221","Two or Three Family Residences","Brookline",7,23,3.29
+"222","Two or Three Family Residences","Quincy",7,19,2.71
+"223","Two or Three Family Residences","Revere",7,13,1.86
+"224","Apartments with Four or more units","Quincy",6,12,2
+"225","Apartments with Four or more units","Waltham",6,20,3.33
+"226","Commercial","Lynnfield",6,26,4.33
+"227","Commercial","Medway",6,24,4
+"228","Condominium","Canton",6,42,7
+"229","Condominium","Natick",6,12,2
+"230","Condominium","Waltham",6,22,3.67
+"231","Condominium","Watertown",6,15,2.5
+"232","Condominium","Winchester",6,18,3
+"233","Industrial","Acton",6,29,4.83
+"234","Industrial","Chelsea",6,60,10
+"235","Industrial","Concord",6,15,2.5
+"236","Industrial","Danvers",6,59,9.83
+"237","Industrial","Hingham",6,58,9.67
+"238","Institutional or Exempt","Watertown",6,23,3.83
+"239","Institutional or Exempt","Weston",6,117,19.5
+"240","Mixed Use","Arlington",6,23,3.83
+"241","Mixed Use","Lynn",6,30,5
+"242","Single Family Residence","Bellingham",6,16,2.67
+"243","Single Family Residence","Maynard",6,8,1.33
+"244","Single Family Residence","Millis",6,12,2
+"245","Single Family Residence","Randolph",6,12,2
+"246","Single Family Residence","Rockland",6,16,2.67
+"247","Two or Three Family Residences","Salem",6,17,2.83
+"248","Two or Three Family Residences","Winthrop",6,7,1.17
+"249","Unknown","Hanover",6,24,4
+"250","Apartments with Four or more units","Brookline",5,10,2
+"251","Apartments with Four or more units","Melrose",5,19,3.8
+"252","Commercial","Bellingham",5,44,8.8
+"253","Commercial","Chelsea",5,98,19.6
+"254","Commercial","Hudson",5,14,2.8
+"255","Commercial","Littleton",5,33,6.6
+"256","Commercial","Southborough",5,38,7.6
+"257","Commercial","Topsfield",5,358,71.6
+"258","Commercial","Weston",5,21,4.2
+"259","Condominium","Lynn",5,37,7.4
+"260","Condominium","Peabody",5,16,3.2
+"261","Federal State or Municipal","Peabody",5,21,4.2
+"262","Federal State or Municipal","Salem",5,31,6.2
+"263","Industrial","Maynard",5,56,11.2
+"264","Industrial","Medway",5,135,27
+"265","Industrial","Norwell",5,165,33
+"266","Institutional or Exempt","Brookline",5,69,13.8
+"267","Institutional or Exempt","Hingham",5,106,21.2
+"268","Institutional or Exempt","Ipswich",5,22,4.4
+"269","Institutional or Exempt","Salem",5,130,26
+"270","Institutional or Exempt","Wellesley",5,55,11
+"271","Mixed Use","Bellingham",5,12,2.4
+"272","Mixed Use","Duxbury",5,12,2.4
+"273","Mixed Use","Gloucester",5,12,2.4
+"274","Mixed Use","Ipswich",5,9,1.8
+"275","Mixed Use","Peabody",5,20,4
+"276","Single Family Residence","Littleton",5,7,1.4
+"277","Single Family Residence","Norfolk",5,13,2.6
+"278","Tax Exempt Other","Acton",5,90,18
+"279","Two or Three Family Residences","Dedham",5,10,2
+"280","Two or Three Family Residences","Framingham",5,43,8.6
+"281","Apartments with Four or more units","Somerville",4,16,4
+"282","Commercial","Bedford",4,11,2.75
+"283","Commercial","Duxbury",4,10,2.5
+"284","Commercial","Maynard",4,20,5
+"285","Commercial","Rockport",4,18,4.5
+"286","Commercial","Sherborn",4,21,5.25
+"287","Commercial","Wilmington",4,10,2.5
+"288","Condominium","Acton",4,13,3.25
+"289","Condominium","Chelsea",4,12,3
+"290","Condominium","Gloucester",4,14,3.5
+"291","Condominium","Medford",4,10,2.5
+"292","Condominium","Needham",4,10,2.5
+"293","Condominium","Quincy",4,5,1.25
+"294","Condominium","Swampscott",4,8,2
+"295","Federal State or Municipal","Cohasset",4,17,4.25
+"296","Federal State or Municipal","Dedham",4,29,7.25
+"297","Federal State or Municipal","Lexington",4,26,6.5
+"298","Federal State or Municipal","Lynn",4,21,5.25
+"299","Federal State or Municipal","Nahant",4,26,6.5
+"300","Federal State or Municipal","Natick",4,28,7
+"301","Federal State or Municipal","Newton",4,54,13.5
+"302","Federal State or Municipal","Somerville",4,11,2.75
+"303","Federal State or Municipal","Stoneham",4,56,14
+"304","Industrial","Beverly",4,12,3
+"305","Industrial","Burlington",4,72,18
+"306","Industrial","Milton",4,41,10.25
+"307","Industrial","Needham",4,67,16.75
+"308","Industrial","Wakefield",4,42,10.5
+"309","Institutional or Exempt","Canton",4,40,10
+"310","Institutional or Exempt","Dedham",4,8,2
+"311","Institutional or Exempt","Framingham",4,75,18.75
+"312","Institutional or Exempt","Marblehead",4,12,3
+"313","Institutional or Exempt","Medford",4,5,1.25
+"314","Mixed Use","Burlington",4,58,14.5
+"315","Mixed Use","Chelsea",4,11,2.75
+"316","Mixed Use","Cohasset",4,16,4
+"317","Mixed Use","Dedham",4,9,2.25
+"318","Mixed Use","Everett",4,18,4.5
+"319","Mixed Use","Lincoln",4,101,25.25
+"320","Mixed Use","Malden",4,9,2.25
+"321","Mixed Use","Rockland",4,13,3.25
+"322","Mixed Use","Watertown",4,37,9.25
+"323","Municipal Vacant","Braintree",4,9,2.25
+"324","Residential Vacant","Weymouth",4,18,4.5
+"325","Single Family Residence","Essex",4,11,2.75
+"326","Single Family Residence","Middleton",4,5,1.25
+"327","Single Family Residence","Topsfield",4,14,3.5
+"328","Tax Exempt Other","Winchester",4,92,23
+"329","Two or Three Family Residences","Beverly",4,5,1.25
+"330","Two or Three Family Residences","Chelsea",4,20,5
+"331","Two or Three Family Residences","Waltham",4,13,3.25
+"332","Unknown","Medford",4,18,4.5
+"333","Apartments with Four or more units","Bedford",3,8,2.67
+"334","Apartments with Four or more units","Concord",3,7,2.33
+"335","Apartments with Four or more units","Peabody",3,7,2.33
+"336","Apartments with Four or more units","Revere",3,11,3.67
+"337","Apartments with Four or more units","Weymouth",3,6,2
+"338","Apartments with Four or more units","Woburn",3,8,2.67
+"339","Commercial","Ashland",3,7,2.33
+"340","Commercial","Hopkinton",3,10,3.33
+"341","Commercial","Hull",3,6,2
+"342","Commercial","Marshfield",3,8,2.67
+"343","Commercial","Medfield",3,11,3.67
+"344","Commercial","Milton",3,23,7.67
+"345","Commercial","Scituate",3,5,1.67
+"346","Commercial","Sharon",3,26,8.67
+"347","Commercial","Westwood",3,81,27
+"348","Commercial","Winthrop",3,13,4.33
+"349","Commercial Vacant","Foxborough",3,70,23.33
+"350","Condominium","Concord",3,17,5.67
+"351","Condominium","Dedham",3,3,1
+"352","Condominium","Holliston",3,6,2
+"353","Condominium","Hull",3,12,4
+"354","Condominium","Malden",3,3,1
+"355","Condominium","Marblehead",3,7,2.33
+"356","Condominium","Melrose",3,5,1.67
+"357","Condominium","Weymouth",3,5,1.67
+"358","Federal State or Municipal","Franklin",3,33,11
+"359","Federal State or Municipal","Gloucester",3,11,3.67
+"360","Federal State or Municipal","Medford",3,7,2.33
+"361","Federal State or Municipal","Medway",3,19,6.33
+"362","Federal State or Municipal","Milton",3,9,3
+"363","Federal State or Municipal","Saugus",3,17,5.67
+"364","Federal State or Municipal","Stoughton",3,19,6.33
+"365","Federal State or Municipal","Sudbury",3,15,5
+"366","Industrial","Essex",3,45,15
+"367","Industrial","Holbrook",3,44,14.67
+"368","Industrial","Littleton",3,6,2
+"369","Industrial","Lynn",3,8,2.67
+"370","Industrial","Medfield",3,5,1.67
+"371","Industrial","Natick",3,9,3
+"372","Industrial","Quincy",3,17,5.67
+"373","Industrial","Randolph",3,46,15.33
+"374","Industrial","Stoneham",3,98,32.67
+"375","Institutional or Exempt","Bedford",3,56,18.67
+"376","Institutional or Exempt","Beverly",3,63,21
+"377","Institutional or Exempt","Braintree",3,11,3.67
+"378","Institutional or Exempt","Danvers",3,16,5.33
+"379","Institutional or Exempt","Lynn",3,10,3.33
+"380","Institutional or Exempt","Natick",3,64,21.33
+"381","Institutional or Exempt","Needham",3,30,10
+"382","Institutional or Exempt","Norwood",3,8,2.67
+"383","Institutional or Exempt Vacant","Norwell",3,20,6.67
+"384","Mixed Use","Medway",3,5,1.67
+"385","Mixed Use","Melrose",3,8,2.67
+"386","Mixed Use","Middleton",3,12,4
+"387","Mixed Use","Norwood",3,25,8.33
+"388","Mixed Use","Pembroke",3,5,1.67
+"389","Mixed Use","Quincy",3,11,3.67
+"390","Mixed Use","Scituate",3,8,2.67
+"391","Mixed Use","Stoneham",3,31,10.33
+"392","Mixed Use","Wakefield",3,13,4.33
+"393","Mixed Use","Walpole",3,4,1.33
+"394","Residential Other","Newton",3,8,2.67
+"395","Single Family Residence","Chelsea",3,6,2
+"396","Single Family Residence","Everett",3,8,2.67
+"397","Single Family Residence","Nahant",3,11,3.67
+"398","Single Family Residence","Revere",3,8,2.67
+"399","Single Family Residence","Stow",3,6,2
+"400","Tax Exempt Other","Marshfield",3,8,2.67
+"401","Tax Exempt Other","Winthrop",3,9,3
+"402","Two or Three Family Residences","Marlborough",3,7,2.33
+"403","Two or Three Family Residences","Melrose",3,4,1.33
+"404","Two or Three Family Residences","Stoneham",3,4,1.33
+"405","Unknown","Lexington",3,13,4.33
+"406","Unknown","Newton",3,11,3.67
+"407","Unknown","Quincy",3,17,5.67
+"408","Unknown","Wakefield",3,41,13.67
+"409","Apartments with Four or more units","Arlington",2,2,1
+"410","Apartments with Four or more units","Ashland",2,2,1
+"411","Apartments with Four or more units","Beverly",2,18,9
+"412","Apartments with Four or more units","Burlington",2,1,0.5
+"413","Apartments with Four or more units","Canton",2,2,1
+"414","Apartments with Four or more units","Gloucester",2,15,7.5
+"415","Apartments with Four or more units","Hudson",2,3,1.5
+"416","Apartments with Four or more units","Lynn",2,7,3.5
+"417","Apartments with Four or more units","Malden",2,3,1.5
+"418","Apartments with Four or more units","Maynard",2,7,3.5
+"419","Apartments with Four or more units","Medford",2,4,2
+"420","Apartments with Four or more units","North Reading",2,5,2.5
+"421","Apartments with Four or more units","Norwood",2,5,2.5
+"422","Apartments with Four or more units","Reading",2,8,4
+"423","Apartments with Four or more units","Rockland",2,6,3
+"424","Apartments with Four or more units","Salem",2,8,4
+"425","Apartments with Four or more units","Wakefield",2,3,1.5
+"426","Apartments with Four or more units","Walpole",2,6,3
+"427","Commercial","Dover",2,3,1.5
+"428","Commercial","Holbrook",2,17,8.5
+"429","Commercial","Holliston",2,12,6
+"430","Commercial","Norfolk",2,2,1
+"431","Commercial","Swampscott",2,10,5
+"432","Commercial Vacant","Natick",2,3,1.5
+"433","Condominium","Ashland",2,5,2.5
+"434","Condominium","Belmont",2,6,3
+"435","Condominium","Boxborough",2,2,1
+"436","Condominium","Braintree",2,3,1.5
+"437","Condominium","Everett",2,5,2.5
+"438","Condominium","Foxborough",2,6,3
+"439","Condominium","Framingham",2,2,1
+"440","Condominium","Hingham",2,8,4
+"441","Condominium","Hudson",2,3,1.5
+"442","Condominium","Ipswich",2,3,1.5
+"443","Condominium","Lexington",2,6,3
+"444","Condominium","Marlborough",2,5,2.5
+"445","Condominium","Rockland",2,2,1
+"446","Condominium","Rockport",2,1,0.5
+"447","Condominium","Scituate",2,26,13
+"448","Condominium","Stoughton",2,9,4.5
+"449","Condominium","Wakefield",2,16,8
+"450","Condominium","Winthrop",2,16,8
+"451","Condominium","Woburn",2,5,2.5
+"452","Federal State or Municipal","Bellingham",2,8,4
+"453","Federal State or Municipal","Belmont",2,5,2.5
+"454","Federal State or Municipal","Canton",2,19,9.5
+"455","Federal State or Municipal","Danvers",2,5,2.5
+"456","Federal State or Municipal","Duxbury",2,10,5
+"457","Federal State or Municipal","Hanover",2,65,32.5
+"458","Federal State or Municipal","Hingham",2,33,16.5
+"459","Federal State or Municipal","Hopkinton",2,16,8
+"460","Federal State or Municipal","Hull",2,20,10
+"461","Federal State or Municipal","Littleton",2,11,5.5
+"462","Federal State or Municipal","Marblehead",2,17,8.5
+"463","Federal State or Municipal","Marlborough",2,5,2.5
+"464","Federal State or Municipal","Marshfield",2,3,1.5
+"465","Federal State or Municipal","Middleton",2,5,2.5
+"466","Federal State or Municipal","Needham",2,12,6
+"467","Federal State or Municipal","Norfolk",2,17,8.5
+"468","Federal State or Municipal","North Reading",2,9,4.5
+"469","Federal State or Municipal","Norwell",2,127,63.5
+"470","Federal State or Municipal","Rockport",2,26,13
+"471","Federal State or Municipal","Waltham",2,24,12
+"472","Federal State or Municipal","Wayland",2,60,30
+"473","Federal State or Municipal","Weston",2,7,3.5
+"474","Industrial","Ashland",2,11,5.5
+"475","Industrial","Belmont",2,5,2.5
+"476","Industrial","Boxborough",2,23,11.5
+"477","Industrial","Foxborough",2,7,3.5
+"478","Industrial","Ipswich",2,16,8
+"479","Industrial","Middleton",2,4,2
+"480","Industrial","Stow",2,6,3
+"481","Industrial","Weymouth",2,34,17
+"482","Institutional or Exempt","Arlington",2,4,2
+"483","Institutional or Exempt","Chelsea",2,3,1.5
+"484","Institutional or Exempt","Foxborough",2,4,2
+"485","Institutional or Exempt","Hanover",2,8,4
+"486","Institutional or Exempt","Melrose",2,7,3.5
+"487","Institutional or Exempt","Milton",2,5,2.5
+"488","Institutional or Exempt","Reading",2,4,2
+"489","Institutional or Exempt","Saugus",2,6,3
+"490","Institutional or Exempt","Sharon",2,7,3.5
+"491","Institutional or Exempt","Somerville",2,7,3.5
+"492","Institutional or Exempt","Wenham",2,28,14
+"493","Institutional or Exempt","Weymouth",2,17,8.5
+"494","Institutional or Exempt","Winthrop",2,9,4.5
+"495","Institutional or Exempt Vacant","Cambridge",2,11,5.5
+"496","Mixed Use","Danvers",2,13,6.5
+"497","Mixed Use","Dover",2,6,3
+"498","Mixed Use","Essex",2,15,7.5
+"499","Mixed Use","Hanover",2,7,3.5
+"500","Mixed Use","Holbrook",2,6,3
+"501","Mixed Use","Holliston",2,6,3
+"502","Mixed Use","Hopkinton",2,3,1.5
+"503","Mixed Use","Littleton",2,7,3.5
+"504","Mixed Use","Maynard",2,19,9.5
+"505","Mixed Use","Needham",2,4,2
+"506","Mixed Use","Southborough",2,4,2
+"507","Mixed Use","Wenham",2,5,2.5
+"508","Mixed Use","Winchester",2,18,9
+"509","Mixed Use","Woburn",2,11,5.5
+"510","Municipal Vacant","Needham",2,19,9.5
+"511","Municipal Vacant","Rockport",2,7,3.5
+"512","Residential Other","Framingham",2,2,1
+"513","Residential Other","Norwell",2,7,3.5
+"514","Residential Other","Rockport",2,10,5
+"515","Tax Exempt Other","Maynard",2,5,2.5
+"516","Tax Exempt Other","Wakefield",2,10,5
+"517","Two or Three Family Residences","Hull",2,2,1
+"518","Two or Three Family Residences","Ipswich",2,5,2.5
+"519","Two or Three Family Residences","Middleton",2,3,1.5
+"520","Two or Three Family Residences","Milford",2,4,2
+"521","Two or Three Family Residences","Millis",2,6,3
+"522","Two or Three Family Residences","Natick",2,5,2.5
+"523","Two or Three Family Residences","Needham",2,4,2
+"524","Two or Three Family Residences","Norwood",2,8,4
+"525","Two or Three Family Residences","Peabody",2,10,5
+"526","Two or Three Family Residences","Stoughton",2,2,1
+"527","Two or Three Family Residences","Swampscott",2,11,5.5
+"528","Two or Three Family Residences","Wellesley",2,4,2
+"529","Two or Three Family Residences","Weymouth",2,2,1
+"530","Two or Three Family Residences","Winchester",2,7,3.5
+"531","Two or Three Family Residences","Woburn",2,8,4
+"532","Apartments with Four or more units","Acton",1,2,2
+"533","Apartments with Four or more units","Chelsea",1,4,4
+"534","Apartments with Four or more units","Danvers",1,2,2
+"535","Apartments with Four or more units","Dedham",1,1,1
+"536","Apartments with Four or more units","Everett",1,4,4
+"537","Apartments with Four or more units","Foxborough",1,1,1
+"538","Apartments with Four or more units","Franklin",1,1,1
+"539","Apartments with Four or more units","Lexington",1,4,4
+"540","Apartments with Four or more units","Marblehead",1,1,1
+"541","Apartments with Four or more units","Marshfield",1,2,2
+"542","Apartments with Four or more units","Millis",1,3,3
+"543","Apartments with Four or more units","Nahant",1,1,1
+"544","Apartments with Four or more units","Needham",1,5,5
+"545","Apartments with Four or more units","Saugus",1,4,4
+"546","Apartments with Four or more units","Sharon",1,1,1
+"547","Apartments with Four or more units","Stoneham",1,1,1
+"548","Apartments with Four or more units","Stoughton",1,1,1
+"549","Apartments with Four or more units","Stow",1,2,2
+"550","Apartments with Four or more units","Sudbury",1,2,2
+"551","Apartments with Four or more units","Watertown",1,3,3
+"552","Apartments with Four or more units","Wellesley",1,2,2
+"553","Apartments with Four or more units","Winchester",1,2,2
+"554","Apartments with Four or more units","Winthrop",1,9,9
+"555","Commercial","Bolton",1,1,1
+"556","Commercial","Cohasset",1,3,3
+"557","Commercial","Essex",1,8,8
+"558","Commercial","Lincoln",1,0,0
+"559","Commercial","Pembroke",1,4,4
+"560","Commercial","Stow",1,3,3
+"561","Commercial","Wenham",1,5,5
+"562","Commercial Vacant","Hanover",1,2,2
+"563","Commercial Vacant","Quincy",1,15,15
+"564","Commercial Vacant","Revere",1,10,10
+"565","Commercial Vacant","Waltham",1,3,3
+"566","Condominium","Danvers",1,5,5
+"567","Condominium","Duxbury",1,1,1
+"568","Condominium","Franklin",1,1,1
+"569","Condominium","Lincoln",1,2,2
+"570","Condominium","Marshfield",1,2,2
+"571","Condominium","Medfield",1,7,7
+"572","Condominium","Middleton",1,2,2
+"573","Condominium","Milton",1,3,3
+"574","Condominium","Norfolk",1,2,2
+"575","Condominium","Norwood",1,1,1
+"576","Condominium","Reading",1,0,0
+"577","Condominium","Revere",1,3,3
+"578","Condominium","Stoneham",1,1,1
+"579","Condominium","Wayland",1,4,4
+"580","Condominium","Wenham",1,13,13
+"581","Condominium","Weston",1,2,2
+"582","Condominium","Wilmington",1,0,0
+"583","Condominium","Wrentham",1,2,2
+"584","Federal State or Municipal","Ashland",1,10,10
+"585","Federal State or Municipal","Beverly",1,4,4
+"586","Federal State or Municipal","Bolton",1,20,20
+"587","Federal State or Municipal","Boxborough",1,3,3
+"588","Federal State or Municipal","Burlington",1,11,11
+"589","Federal State or Municipal","Dover",1,5,5
+"590","Federal State or Municipal","Everett",1,16,16
+"591","Federal State or Municipal","Foxborough",1,15,15
+"592","Federal State or Municipal","Hudson",1,3,3
+"593","Federal State or Municipal","Ipswich",1,15,15
+"594","Federal State or Municipal","Lincoln",1,3,3
+"595","Federal State or Municipal","Malden",1,3,3
+"596","Federal State or Municipal","Medfield",1,2,2
+"597","Federal State or Municipal","Randolph",1,4,4
+"598","Federal State or Municipal","Revere",1,3,3
+"599","Federal State or Municipal","Scituate",1,2,2
+"600","Federal State or Municipal","Sharon",1,4,4
+"601","Federal State or Municipal","Southborough",1,4,4
+"602","Federal State or Municipal","Swampscott",1,1,1
+"603","Federal State or Municipal","Topsfield",1,1,1
+"604","Federal State or Municipal","Watertown",1,38,38
+"605","Federal State or Municipal","Wellesley",1,7,7
+"606","Federal State or Municipal","Weymouth",1,3,3
+"607","Federal State or Municipal","Wilmington",1,3,3
+"608","Group Quarters","Weymouth",1,30,30
+"609","Industrial","Bellingham",1,10,10
+"610","Industrial","Bolton",1,3,3
+"611","Industrial","Dedham",1,1,1
+"612","Industrial","Hanover",1,75,75
+"613","Industrial","Hopkinton",1,4,4
+"614","Industrial","Lexington",1,10,10
+"615","Industrial","Melrose",1,13,13
+"616","Industrial","Milford",1,60,60
+"617","Industrial","North Reading",1,0,0
+"618","Industrial","Saugus",1,2,2
+"619","Industrial","Southborough",1,60,60
+"620","Industrial","Sudbury",1,4,4
+"621","Industrial","Topsfield",1,35,35
+"622","Industrial","Wellesley",1,4,4
+"623","Industrial","Westwood",1,6,6
+"624","Industrial","Winchester",1,1,1
+"625","Industrial Vacant","Bedford",1,4,4
+"626","Industrial Vacant","Hudson",1,7,7
+"627","Industrial Vacant","Peabody",1,2,2
+"628","Industrial Vacant","Salem",1,13,13
+"629","Institutional or Exempt","Belmont",1,70,70
+"630","Institutional or Exempt","Bolton",1,3,3
+"631","Institutional or Exempt","Burlington",1,1,1
+"632","Institutional or Exempt","Cohasset",1,3,3
+"633","Institutional or Exempt","Dover",1,3,3
+"634","Institutional or Exempt","Essex",1,4,4
+"635","Institutional or Exempt","Franklin",1,1,1
+"636","Institutional or Exempt","Holbrook",1,2,2
+"637","Institutional or Exempt","Hopkinton",1,1,1
+"638","Institutional or Exempt","Hull",1,14,14
+"639","Institutional or Exempt","Milford",1,2,2
+"640","Institutional or Exempt","Quincy",1,3,3
+"641","Institutional or Exempt","Scituate",1,1,1
+"642","Institutional or Exempt","Sudbury",1,2,2
+"643","Institutional or Exempt","Swampscott",1,2,2
+"644","Institutional or Exempt","Topsfield",1,3,3
+"645","Institutional or Exempt","Woburn",1,2,2
+"646","Institutional or Exempt Vacant","Beverly",1,25,25
+"647","Institutional or Exempt Vacant","Medford",1,10,10
+"648","Institutional or Exempt Vacant","Woburn",1,3,3
+"649","Mixed Use","Ashland",1,1,1
+"650","Mixed Use","Bedford",1,4,4
+"651","Mixed Use","Belmont",1,5,5
+"652","Mixed Use","Braintree",1,1,1
+"653","Mixed Use","Canton",1,1,1
+"654","Mixed Use","Foxborough",1,2,2
+"655","Mixed Use","Franklin",1,3,3
+"656","Mixed Use","Marlborough",1,0,0
+"657","Mixed Use","Milford",1,9,9
+"658","Mixed Use","Milton",1,9,9
+"659","Mixed Use","Norfolk",1,2,2
+"660","Mixed Use","North Reading",1,2,2
+"661","Mixed Use","Reading",1,1,1
+"662","Mixed Use","Rockport",1,1,1
+"663","Mixed Use","Saugus",1,3,3
+"664","Mixed Use","Stow",1,1,1
+"665","Mixed Use","Sudbury",1,2,2
+"666","Mixed Use","Swampscott",1,3,3
+"667","Mixed Use","Wilmington",1,1,1
+"668","Municipal Vacant","Ashland",1,5,5
+"669","Municipal Vacant","Boston",1,51,51
+"670","Municipal Vacant","Concord",1,10,10
+"671","Municipal Vacant","Foxborough",1,2,2
+"672","Municipal Vacant","Hull",1,15,15
+"673","Municipal Vacant","Ipswich",1,3,3
+"674","Municipal Vacant","Natick",1,0,0
+"675","Municipal Vacant","Quincy",1,15,15
+"676","Municipal Vacant","Sharon",1,3,3
+"677","Municipal Vacant","Somerville",1,8,8
+"678","Municipal Vacant","Walpole",1,4,4
+"679","Municipal Vacant","Wenham",1,13,13
+"680","Municipal Vacant","Weston",1,3,3
+"681","Residential Other","Bedford",1,2,2
+"682","Residential Other","Beverly",1,5,5
+"683","Residential Other","Brookline",1,2,2
+"684","Residential Other","Canton",1,2,2
+"685","Residential Other","Gloucester",1,3,3
+"686","Residential Other","Hopkinton",1,5,5
+"687","Residential Other","Ipswich",1,3,3
+"688","Residential Other","Medfield",1,1,1
+"689","Residential Other","Medway",1,1,1
+"690","Residential Other","Peabody",1,1,1
+"691","Residential Other","Sharon",1,2,2
+"692","Residential Other","Stow",1,2,2
+"693","Residential Other","Topsfield",1,1,1
+"694","Residential Other","Watertown",1,8,8
+"695","Residential Other","Wayland",1,1,1
+"696","Residential Other","Weston",1,1,1
+"697","Residential Vacant","Acton",1,1,1
+"698","Residential Vacant","Boston",1,7,7
+"699","Residential Vacant","Lincoln",1,3,3
+"700","Residential Vacant","Littleton",1,2,2
+"701","Residential Vacant","Lynnfield",1,4,4
+"702","Residential Vacant","Marblehead",1,4,4
+"703","Residential Vacant","Randolph",1,2,2
+"704","Residential Vacant","Saugus",1,3,3
+"705","Single Family Residence","Holbrook",1,1,1
+"706","Single Family Residence","Wrentham",1,3,3
+"707","Tax Exempt Other","Canton",1,20,20
+"708","Tax Exempt Other","Carlisle",1,2,2
+"709","Tax Exempt Other","Dover",1,3,3
+"710","Tax Exempt Other","Hingham",1,50,50
+"711","Tax Exempt Other","Hopkinton",1,2,2
+"712","Tax Exempt Other","Malden",1,20,20
+"713","Tax Exempt Other","Millis",1,1,1
+"714","Tax Exempt Other","Norwell",1,8,8
+"715","Tax Exempt Other","Reading",1,10,10
+"716","Tax Exempt Other","Rockport",1,3,3
+"717","Tax Exempt Other","Stow",1,1,1
+"718","Tax Exempt Other","Wayland",1,2,2
+"719","Two or Three Family Residences","Acton",1,3,3
+"720","Two or Three Family Residences","Bellingham",1,1,1
+"721","Two or Three Family Residences","Concord",1,7,7
+"722","Two or Three Family Residences","Danvers",1,9,9
+"723","Two or Three Family Residences","Essex",1,3,3
+"724","Two or Three Family Residences","Foxborough",1,2,2
+"725","Two or Three Family Residences","Franklin",1,2,2
+"726","Two or Three Family Residences","Hanover",1,1,1
+"727","Two or Three Family Residences","Hingham",1,1,1
+"728","Two or Three Family Residences","Holbrook",1,4,4
+"729","Two or Three Family Residences","Marblehead",1,3,3
+"730","Two or Three Family Residences","Milton",1,4,4
+"731","Two or Three Family Residences","Pembroke",1,3,3
+"732","Two or Three Family Residences","Reading",1,2,2
+"733","Two or Three Family Residences","Saugus",1,1,1
+"734","Two or Three Family Residences","Sharon",1,4,4
+"735","Two or Three Family Residences","Stow",1,3,3
+"736","Unknown","Braintree",1,3,3
+"737","Unknown","Dedham",1,12,12
+"738","Unknown","Essex",1,5,5
+"739","Unknown","Gloucester",1,0,0
+"740","Unknown","Ipswich",1,3,3
+"741","Unknown","Middleton",1,2,2
+"742","Unknown","Somerville",1,8,8
+"743","Unknown","Woburn",1,6,6
