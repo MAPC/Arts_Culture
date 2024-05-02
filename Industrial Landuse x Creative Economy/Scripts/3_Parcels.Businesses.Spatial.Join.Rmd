@@ -281,7 +281,82 @@ ggplot() +
 
 #Here we have an example of the parcel data not having am address (or parcel) that matches the address of the business (56 Dexter Ave vs 32 Dexter Street). That said, 56 Dexter Ave was geocoded to the appropriate location (no 56 Dexter Ave exists.)
 ```
-2.4 Creating a Parcel-level Count of Businesses and Employment
+2.4 Pembroke
+```{r}
+address_check <- biz_in_parcel |> 
+  select(
+    Min_LUC,
+    CONAME,
+    STADDR,
+    STCITY_CLEAN,
+    LOC_ID,
+    ADDR_NUM,
+    FULL_STR,
+    CITY
+  ) |> 
+  filter(
+    STCITY_CLEAN == "Pembroke"
+  ) |>
+  mutate(
+    STADDR_NUM = word(STADDR, start = 1, sep = " "),
+    addr_num_check = if_else(ADDR_NUM == STADDR_NUM, 1 , 0)
+  )
+
+#First Biz
+hp_biz <- mapc_biz.spatial |> 
+  filter(
+    CONAME == "North River Graphics Inc" & STCITY_CLEAN == "Pembroke"
+  )
+
+waltham_parcels <- mapc_parcels |> 
+  filter(
+    CITY == "Pembroke" & (FULL_STR == "CORPORATE PARK DRIVE")
+  )
+
+ggplot() +
+  geom_sf(data = waltham_parcels, aes(fill = ADDR_NUM))+
+  geom_sf(data = hp_biz) +
+  theme_minimal()
+```
+2.4 Norwood
+```{r}
+address_check <- biz_in_parcel |> 
+  select(
+    Min_LUC,
+    CONAME,
+    STADDR,
+    STCITY_CLEAN,
+    LOC_ID,
+    ADDR_NUM,
+    FULL_STR,
+    CITY
+  ) |> 
+  filter(
+    STCITY_CLEAN == "Norwood"
+  ) |>
+  mutate(
+    STADDR_NUM = word(STADDR, start = 1, sep = " "),
+    addr_num_check = if_else(ADDR_NUM == STADDR_NUM, 1 , 0)
+  )
+
+#First Biz
+hp_biz <- mapc_biz.spatial |> 
+  filter(
+    CONAME == "Diamond Guild" & STCITY_CLEAN == "Norwood"
+  )
+
+waltham_parcels <- mapc_parcels |> 
+  filter(
+    CITY == "Norwood" & (FULL_STR == "MORSE ST")
+  )
+
+ggplot() +
+  geom_sf(data = waltham_parcels, aes(fill = ADDR_NUM))+
+  geom_sf(data = hp_biz) +
+  theme_minimal()
+```
+
+2.5 Creating a Parcel-level Count of Businesses and Employment
 ```{r}
 #Table to rejoin to parcel geometries for spatial visualization
 Parcel_Biz <- biz_in_parcel |> 
@@ -927,12 +1002,13 @@ write.csv(
 4.0 Spatial Analysis
 4.1 General Municipal Maps
 ```{r}
-#Set the muninipality that you would like to map
-set_muni <- ""
-#Lets visualize the parcels that do have arts businesses in them
-waltham_parcels_full <- mapc_parcels |> 
+#Set the municipality that you would like to map
+set_muni <- "Pembroke"
+
+#Visualize the parcels that do have arts businesses in them
+municipal_parcels <- mapc_parcels |> 
   filter(
-    CITY == "Watertown"
+    CITY == set_muni
   ) |> 
   left_join(
     Parcel_Biz,
@@ -959,28 +1035,28 @@ waltham_parcels_full <- mapc_parcels |>
   )
 
 #
-waltham_parcels_ind <- waltham_parcels_full |> 
+municipal_parcels_ind <- municipal_parcels |> 
   filter(
     USE_CODE_SYMB == "Industrial" | USE_CODE_SYMB == "Industrial Vacant"
   )
 
 muni_boundary <- mapc_municipalities |> 
   filter(
-    muni_name == "Watertown"
+    muni_name == set_muni
   )
 
 #Second Biz
 points <- mapc_biz.spatial |> 
   filter(
-    STCITY_CLEAN == "Watertown" & OBJECT_ID != "169672"
+    STCITY_CLEAN == set_muni #& OBJECT_ID != "169672"
   )
 
 map.1 <- ggplot() +
-  geom_sf(data = waltham_parcels_full, fill = NA, color = "grey")+
+  geom_sf(data = municipal_parcels, fill = NA, color = "grey")+
   geom_sf(data = points) +
   geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5) +
   labs(
-    title = "Point Location of Arts Businesses in Watertown (2023)"
+    title = paste0("Point Location of Arts Businesses in ", set_muni, " (2023)")
   ) +
   theme_minimal() +
   theme(
@@ -991,15 +1067,17 @@ map.1 <- ggplot() +
     panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
   )
 
+map.1
+
 ggsave(
-  filename = "BizPoints_Watertown.jpeg",
+  filename = paste0("BizPoints_",set_muni,".jpeg"),
   plot = map.1,
   device = "jpeg",
   path = output_path
 )
 
 map.2 <- ggplot() +
-  geom_sf(data = waltham_parcels_full, linewidth = 0.001, aes(fill = biz), color = "grey") +
+  geom_sf(data = municipal_parcels, linewidth = 0.001, aes(fill = biz), color = "grey")+
   scale_fill_continuous(
     high = "purple", low = "white",
     breaks = c(
@@ -1008,16 +1086,16 @@ map.2 <- ggplot() +
       round(max(waltham_parcels_full$biz)*(2/3),0),
       max(waltham_parcels_full$biz)),
     name = "Number of\nBusinesses"
-  ) +
-  geom_sf(data = waltham_parcels_ind, aes(color = USE_CODE_SYMB), fill = NA, linewidth = 0.8) +
+  )+
+  geom_sf(data = municipal_parcels_ind, aes(color = USE_CODE_SYMB), fill = NA, linewidth = 0.8)+
   scale_color_discrete(
     name = "Industrial Parcels"
-  ) +
-  geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5) +
+  )+
+  geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5)+
   labs(
-    title = "Density of Arts Businesses in Watertown (2023)"
-  ) +
-  theme_minimal() +
+    title = paste0("Density of Arts Businesses in ", set_muni, " (2023)")
+  )+
+  theme_minimal()+
   theme(
     axis.text.x = element_blank(),
     axis.text.y = element_blank(),
@@ -1029,21 +1107,21 @@ map.2 <- ggplot() +
 map.2
 
 ggsave(
-  filename = "BizDensity_Watertown.jpeg",
+  filename = paste0("BizDensity_",set_muni,".jpeg"),
   plot = map.2,
   device = "jpeg",
   path = output_path
 )
 
 map.3 <- ggplot() +
-  geom_sf(data = waltham_parcels_full, aes(fill = as.factor(ind_intersect)), color = "grey") +
+  geom_sf(data = municipal_parcels, aes(fill = as.factor(ind_intersect)), color = "grey") +
   scale_fill_manual(
     values = c("white", "purple"),
     name = "Industrial Parcels\nwith Arts Businesses"
   ) +
   geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5) +
   labs(
-    title = "Intersect of Arts Businesses & Industrial Parcels in Watertown (2023)"
+    title = paste0("Intersect of Arts Businesses & Industrial Parcels in ", set_muni, " (2023)")
   ) +
   theme_minimal() +
   theme(
@@ -1054,8 +1132,10 @@ map.3 <- ggplot() +
     panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
   )
 
+map.3
+
 ggsave(
-  filename = "BizIndIntersect_Watertown.jpeg",
+  filename = paste0("BizIndIntersect_",set_muni,".jpeg"),
   plot = map.3,
   device = "jpeg",
   path = output_path
