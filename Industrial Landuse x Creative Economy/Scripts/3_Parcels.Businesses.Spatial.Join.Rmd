@@ -19,6 +19,7 @@ require(mapcdatakeys)
 require(dplyr)
 require(readxl)
 require(ggplot2)
+require(spdep)
 #source("C:/Project_Work/Arts_Culture/Industrial Landuse x Creative Economy/Scripts/municipal_name_fix.func.R")
 
 #Load in data keys to add geographies to data later on.
@@ -69,6 +70,14 @@ mapc_municipalities <- st_read("https://services.arcgis.com/c5WwApDsDjRhIVkH/arc
     keys,
     by = c("muni_id")
   )
+
+#Reading in some municipal boundaries
+nbhds <- st_read("K:/DataServices/Datasets/Boundaries/Spatial/bos_qcy_svl_cam_arl_nbhds/partnercity_nbhds.shp")
+
+#Reading in the Fabrication (Fab) Zoning District for Somerville analysis
+fab_dist <- st_read("C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Spatial/Zoning.shp") |> filter(ZoneCode == "FAB")
+
+#view(fab_dist)
 ```
 
 1.0 Load relevant data
@@ -1008,15 +1017,19 @@ set_muni <- "Pembroke"
 #Visualize the parcels that do have arts businesses in them
 municipal_parcels <- mapc_parcels |> 
   filter(
+    #Filter Parcels by the municipality set at the beginning of this chunk
     CITY == set_muni
   ) |> 
+  #Join the count of arts businesses by parcel LOC_ID
   left_join(
     Parcel_Biz,
     by = c("LOC_ID")
   ) |> 
   mutate(
+    #Set NA values to 0 for number of businesses and employment
     biz = tidyr::replace_na(biz, 0),
     emp = tidyr::replace_na(emp, 0),
+    #Create bins for the number of businesses on a parcel for mapping later
     biz_bins = case_when(
       biz <= 0 ~ "0",
       biz == 1 ~ "1",
@@ -1029,28 +1042,31 @@ municipal_parcels <- mapc_parcels |>
       biz >= 26 & biz <= 30 ~ "26-30",
       biz > 30 ~"> 30"
     ),
+    #Binary representing parcels with businesses in industrial parcels
     ind_intersect = if_else(
       (USE_CODE_SYMB == "Industrial" | USE_CODE_SYMB == "Industrial Vacant") & biz > 0, 1, 0
     )
   )
 
-#
+#Create a layer of solely industrial parcels
 municipal_parcels_ind <- municipal_parcels |> 
   filter(
     USE_CODE_SYMB == "Industrial" | USE_CODE_SYMB == "Industrial Vacant"
   )
 
+#Filter for the municipal boundary of the selected municipality
 muni_boundary <- mapc_municipalities |> 
   filter(
     muni_name == set_muni
   )
 
-#Second Biz
+#Business point data
 points <- mapc_biz.spatial |> 
   filter(
     STCITY_CLEAN == set_muni #& OBJECT_ID != "169672"
   )
 
+#Map 1: Point locations of arts businsesses over a parcel map of a municipality
 map.1 <- ggplot() +
   geom_sf(data = municipal_parcels, fill = NA, color = "grey")+
   geom_sf(data = points) +
@@ -1076,6 +1092,7 @@ ggsave(
   path = output_path
 )
 
+#Map 2: Parcel arts business density map with overlay of industrial parcels
 map.2 <- ggplot() +
   geom_sf(data = municipal_parcels, linewidth = 0.001, aes(fill = biz), color = "grey")+
   scale_fill_continuous(
@@ -1085,7 +1102,7 @@ map.2 <- ggplot() +
       round(max(waltham_parcels_full$biz)*(1/3),0),
       round(max(waltham_parcels_full$biz)*(2/3),0),
       max(waltham_parcels_full$biz)),
-    name = "Number of\nBusinesses"
+    name = "Number of/nBusinesses"
   )+
   geom_sf(data = municipal_parcels_ind, aes(color = USE_CODE_SYMB), fill = NA, linewidth = 0.8)+
   scale_color_discrete(
@@ -1113,11 +1130,12 @@ ggsave(
   path = output_path
 )
 
+#Map 3: Highlights where arts businsesses intersect with industrial parcels
 map.3 <- ggplot() +
   geom_sf(data = municipal_parcels, aes(fill = as.factor(ind_intersect)), color = "grey") +
   scale_fill_manual(
     values = c("white", "purple"),
-    name = "Industrial Parcels\nwith Arts Businesses"
+    name = "Industrial Parcels/nwith Arts Businesses"
   ) +
   geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5) +
   labs(
@@ -1140,4 +1158,506 @@ ggsave(
   device = "jpeg",
   path = output_path
 )
+```
+
+4.2 Somerville Maps
+```{r}
+#Set the municipality that you would like to map
+set_muni <- "Somerville"
+
+#Visualize the parcels that do have arts businesses in them
+municipal_parcels <- mapc_parcels |> 
+  filter(
+    #Filter Parcels by the municipality set at the beginning of this chunk
+    CITY == set_muni
+  ) |> 
+  #Join the count of arts businesses by parcel LOC_ID
+  left_join(
+    Parcel_Biz,
+    by = c("LOC_ID")
+  ) |> 
+  mutate(
+    #Set NA values to 0 for number of businesses and employment
+    biz = tidyr::replace_na(biz, 0),
+    emp = tidyr::replace_na(emp, 0),
+    #Create bins for the number of businesses on a parcel for mapping later
+    biz_bins = case_when(
+      biz <= 0 ~ "0",
+      biz == 1 ~ "1",
+      biz == 2 ~"2",
+      biz >= 3 & biz <= 5 ~ "3-5",
+      biz >= 6 & biz <= 10 ~ "6-10",
+      biz >= 11 & biz <= 15 ~ "11-15",
+      biz >= 16 & biz <= 20 ~ "16-20",
+      biz >= 21 & biz <= 25 ~ "21-25",
+      biz >= 26 & biz <= 30 ~ "26-30",
+      biz > 30 ~"> 30"
+    ),
+    #Binary representing parcels with businesses in industrial parcels
+    ind_intersect = if_else(
+      (USE_CODE_SYMB == "Industrial" | USE_CODE_SYMB == "Industrial Vacant") & biz > 0, 1, 0
+    )
+  )
+
+#Create a layer of solely industrial parcels
+municipal_parcels_ind <- municipal_parcels |> 
+  filter(
+    USE_CODE_SYMB == "Industrial" | USE_CODE_SYMB == "Industrial Vacant"
+  )
+
+#Filter for the municipal boundary of the selected municipality
+muni_boundary <- mapc_municipalities |> 
+  filter(
+    muni_name == set_muni
+  )
+
+#Business point data
+points <- mapc_biz.spatial |> 
+  filter(
+    STCITY_CLEAN == set_muni #& OBJECT_ID != "169672"
+  )
+
+#Map 1: Point locations of arts businsesses over a parcel map of a municipality
+map.1 <- ggplot() +
+  geom_sf(data = municipal_parcels, fill = NA, color = "grey")+
+  geom_sf(data = points) +
+  geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5) +
+  geom_sf(data = fab_dist, fill = NA, aes(color = ZoneCode), linewidth = 0.8) +
+  scale_color_discrete(
+    name = "Fabrication Zoning District"
+  ) +
+  labs(
+    title = paste0("Point Location of Arts Businesses in ", set_muni, " (2023)")
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
+  )
+
+map.1
+
+ggsave(
+  filename = paste0("BizPoints_",set_muni,".jpeg"),
+  plot = map.1,
+  device = "jpeg",
+  path = output_path
+)
+
+#Map 2: Parcel arts business density map with overlay of industrial parcels
+map.2 <- ggplot() +
+  geom_sf(data = municipal_parcels, linewidth = 0.001, aes(fill = biz), color = "grey")+
+  scale_fill_continuous(
+    high = "purple", low = "white",
+    breaks = c(
+      min(municipal_parcels$biz),
+      round(max(municipal_parcels$biz)*(1/3),0),
+      round(max(municipal_parcels$biz)*(2/3),0),
+      max(municipal_parcels$biz)),
+    name = "Number of/nBusinesses"
+  )+
+  geom_sf(data = municipal_parcels_ind, aes(color = USE_CODE_SYMB), fill = NA, linewidth = 0.8)+
+  scale_color_discrete(
+    name = "Industrial Parcels"
+  )+
+  geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5)+
+  labs(
+    title = paste0("Density of Arts Businesses in ", set_muni, " (2023)")
+  )+
+  theme_minimal()+
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
+  )
+
+map.2
+
+ggsave(
+  filename = paste0("BizDensity_",set_muni,".jpeg"),
+  plot = map.2,
+  device = "jpeg",
+  path = output_path
+)
+
+#Map 3: Highlights where arts businsesses intersect with industrial parcels
+map.3 <- ggplot() +
+  geom_sf(data = municipal_parcels, aes(fill = as.factor(ind_intersect)), color = "grey") +
+  scale_fill_manual(
+    values = c("white", "purple"),
+    name = "Industrial Parcels/nwith Arts Businesses"
+  ) +
+  geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5) +
+  labs(
+    title = paste0("Intersect of Arts Businesses & Industrial Parcels in ", set_muni, " (2023)")
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
+  )
+
+map.3
+
+ggsave(
+  filename = paste0("BizIndIntersect_",set_muni,".jpeg"),
+  plot = map.3,
+  device = "jpeg",
+  path = output_path
+)
+```
+
+4.3 Cambridge Maps
+```{r}
+#Set the municipality that you would like to map
+set_muni <- "Pembroke"
+
+#Visualize the parcels that do have arts businesses in them
+municipal_parcels <- mapc_parcels |> 
+  filter(
+    #Filter Parcels by the municipality set at the beginning of this chunk
+    CITY == set_muni
+  ) |> 
+  #Join the count of arts businesses by parcel LOC_ID
+  left_join(
+    Parcel_Biz,
+    by = c("LOC_ID")
+  ) |> 
+  mutate(
+    #Set NA values to 0 for number of businesses and employment
+    biz = tidyr::replace_na(biz, 0),
+    emp = tidyr::replace_na(emp, 0),
+    #Create bins for the number of businesses on a parcel for mapping later
+    biz_bins = case_when(
+      biz <= 0 ~ "0",
+      biz == 1 ~ "1",
+      biz == 2 ~"2",
+      biz >= 3 & biz <= 5 ~ "3-5",
+      biz >= 6 & biz <= 10 ~ "6-10",
+      biz >= 11 & biz <= 15 ~ "11-15",
+      biz >= 16 & biz <= 20 ~ "16-20",
+      biz >= 21 & biz <= 25 ~ "21-25",
+      biz >= 26 & biz <= 30 ~ "26-30",
+      biz > 30 ~"> 30"
+    ),
+    #Binary representing parcels with businesses in industrial parcels
+    ind_intersect = if_else(
+      (USE_CODE_SYMB == "Industrial" | USE_CODE_SYMB == "Industrial Vacant") & biz > 0, 1, 0
+    )
+  )
+
+#Create a layer of solely industrial parcels
+municipal_parcels_ind <- municipal_parcels |> 
+  filter(
+    USE_CODE_SYMB == "Industrial" | USE_CODE_SYMB == "Industrial Vacant"
+  )
+
+#Filter for the municipal boundary of the selected municipality
+muni_boundary <- mapc_municipalities |> 
+  filter(
+    muni_name == set_muni
+  )
+
+#Business point data
+points <- mapc_biz.spatial |> 
+  filter(
+    STCITY_CLEAN == set_muni #& OBJECT_ID != "169672"
+  )
+
+#Map 1: Point locations of arts businsesses over a parcel map of a municipality
+map.1 <- ggplot() +
+  geom_sf(data = municipal_parcels, fill = NA, color = "grey")+
+  geom_sf(data = points) +
+  geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5) +
+  labs(
+    title = paste0("Point Location of Arts Businesses in ", set_muni, " (2023)")
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
+  )
+
+map.1
+
+ggsave(
+  filename = paste0("BizPoints_",set_muni,".jpeg"),
+  plot = map.1,
+  device = "jpeg",
+  path = output_path
+)
+
+#Map 2: Parcel arts business density map with overlay of industrial parcels
+map.2 <- ggplot() +
+  geom_sf(data = municipal_parcels, linewidth = 0.001, aes(fill = biz), color = "grey")+
+  scale_fill_continuous(
+    high = "purple", low = "white",
+    breaks = c(
+      min(waltham_parcels_full$biz),
+      round(max(waltham_parcels_full$biz)*(1/3),0),
+      round(max(waltham_parcels_full$biz)*(2/3),0),
+      max(waltham_parcels_full$biz)),
+    name = "Number of/nBusinesses"
+  )+
+  geom_sf(data = municipal_parcels_ind, aes(color = USE_CODE_SYMB), fill = NA, linewidth = 0.8)+
+  scale_color_discrete(
+    name = "Industrial Parcels"
+  )+
+  geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5)+
+  labs(
+    title = paste0("Density of Arts Businesses in ", set_muni, " (2023)")
+  )+
+  theme_minimal()+
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
+  )
+
+map.2
+
+ggsave(
+  filename = paste0("BizDensity_",set_muni,".jpeg"),
+  plot = map.2,
+  device = "jpeg",
+  path = output_path
+)
+
+#Map 3: Highlights where arts businsesses intersect with industrial parcels
+map.3 <- ggplot() +
+  geom_sf(data = municipal_parcels, aes(fill = as.factor(ind_intersect)), color = "grey") +
+  scale_fill_manual(
+    values = c("white", "purple"),
+    name = "Industrial Parcels/nwith Arts Businesses"
+  ) +
+  geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5) +
+  labs(
+    title = paste0("Intersect of Arts Businesses & Industrial Parcels in ", set_muni, " (2023)")
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
+  )
+
+map.3
+
+ggsave(
+  filename = paste0("BizIndIntersect_",set_muni,".jpeg"),
+  plot = map.3,
+  device = "jpeg",
+  path = output_path
+)
+```
+
+4.4 Boston Maps
+```{r}
+#Set the municipality that you would like to map
+set_muni <- "Pembroke"
+
+#Visualize the parcels that do have arts businesses in them
+municipal_parcels <- mapc_parcels |> 
+  filter(
+    #Filter Parcels by the municipality set at the beginning of this chunk
+    CITY == set_muni
+  ) |> 
+  #Join the count of arts businesses by parcel LOC_ID
+  left_join(
+    Parcel_Biz,
+    by = c("LOC_ID")
+  ) |> 
+  mutate(
+    #Set NA values to 0 for number of businesses and employment
+    biz = tidyr::replace_na(biz, 0),
+    emp = tidyr::replace_na(emp, 0),
+    #Create bins for the number of businesses on a parcel for mapping later
+    biz_bins = case_when(
+      biz <= 0 ~ "0",
+      biz == 1 ~ "1",
+      biz == 2 ~"2",
+      biz >= 3 & biz <= 5 ~ "3-5",
+      biz >= 6 & biz <= 10 ~ "6-10",
+      biz >= 11 & biz <= 15 ~ "11-15",
+      biz >= 16 & biz <= 20 ~ "16-20",
+      biz >= 21 & biz <= 25 ~ "21-25",
+      biz >= 26 & biz <= 30 ~ "26-30",
+      biz > 30 ~"> 30"
+    ),
+    #Binary representing parcels with businesses in industrial parcels
+    ind_intersect = if_else(
+      (USE_CODE_SYMB == "Industrial" | USE_CODE_SYMB == "Industrial Vacant") & biz > 0, 1, 0
+    )
+  )
+
+#Create a layer of solely industrial parcels
+municipal_parcels_ind <- municipal_parcels |> 
+  filter(
+    USE_CODE_SYMB == "Industrial" | USE_CODE_SYMB == "Industrial Vacant"
+  )
+
+#Filter for the municipal boundary of the selected municipality
+muni_boundary <- mapc_municipalities |> 
+  filter(
+    muni_name == set_muni
+  )
+
+#Business point data
+points <- mapc_biz.spatial |> 
+  filter(
+    STCITY_CLEAN == set_muni #& OBJECT_ID != "169672"
+  )
+
+#Map 1: Point locations of arts businsesses over a parcel map of a municipality
+map.1 <- ggplot() +
+  geom_sf(data = municipal_parcels, fill = NA, color = "grey")+
+  geom_sf(data = points) +
+  geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5) +
+  labs(
+    title = paste0("Point Location of Arts Businesses in ", set_muni, " (2023)")
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
+  )
+
+map.1
+
+ggsave(
+  filename = paste0("BizPoints_",set_muni,".jpeg"),
+  plot = map.1,
+  device = "jpeg",
+  path = output_path
+)
+
+#Map 2: Parcel arts business density map with overlay of industrial parcels
+map.2 <- ggplot() +
+  geom_sf(data = municipal_parcels, linewidth = 0.001, aes(fill = biz), color = "grey")+
+  scale_fill_continuous(
+    high = "purple", low = "white",
+    breaks = c(
+      min(waltham_parcels_full$biz),
+      round(max(waltham_parcels_full$biz)*(1/3),0),
+      round(max(waltham_parcels_full$biz)*(2/3),0),
+      max(waltham_parcels_full$biz)),
+    name = "Number of/nBusinesses"
+  )+
+  geom_sf(data = municipal_parcels_ind, aes(color = USE_CODE_SYMB), fill = NA, linewidth = 0.8)+
+  scale_color_discrete(
+    name = "Industrial Parcels"
+  )+
+  geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5)+
+  labs(
+    title = paste0("Density of Arts Businesses in ", set_muni, " (2023)")
+  )+
+  theme_minimal()+
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
+  )
+
+map.2
+
+ggsave(
+  filename = paste0("BizDensity_",set_muni,".jpeg"),
+  plot = map.2,
+  device = "jpeg",
+  path = output_path
+)
+
+#Map 3: Highlights where arts businsesses intersect with industrial parcels
+map.3 <- ggplot() +
+  geom_sf(data = municipal_parcels, aes(fill = as.factor(ind_intersect)), color = "grey") +
+  scale_fill_manual(
+    values = c("white", "purple"),
+    name = "Industrial Parcels/nwith Arts Businesses"
+  ) +
+  geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5) +
+  labs(
+    title = paste0("Intersect of Arts Businesses & Industrial Parcels in ", set_muni, " (2023)")
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
+  )
+
+map.3
+
+ggsave(
+  filename = paste0("BizIndIntersect_",set_muni,".jpeg"),
+  plot = map.3,
+  device = "jpeg",
+  path = output_path
+)
+```
+
+4.5 Business Cluster Analysis
+```{r}
+#We can visually inspect the maps we've made to judge whether or not arts businsses
+#co-locate. We can test this assumption by determining the spatial dependence
+#of arts businesses at the parcel level.
+
+#First we need to determine which polygons (parcels) are neighbors to one another.
+#There are two common methods for this: rook and queen contiguity. Rook contiguity refers
+#to parcels with borders in contact with each other. Queen contiguity refers to parcels with borders that are near to each other in all directions.
+
+#Set Muni we want to evaluate (as a proof of concept)
+set_muni <- "Waltham"
+
+#Create a separate set of parcel data for the test municipality
+cluster_anlaysis_parcels <- mapc_parcels |> 
+  filter(
+    #Filter Parcels by the municipality set at the beginning of this chunk
+    CITY == set_muni
+  ) |> 
+  #Join the count of arts businesses by parcel LOC_ID
+  left_join(
+    Parcel_Biz,
+    by = c("LOC_ID")
+  ) |> 
+  mutate(
+    #Set NA values to 0 for number of businesses and employment
+    biz = tidyr::replace_na(biz, 0),
+    emp = tidyr::replace_na(emp, 0),
+  )
+
+rook_nhbrs <- spdep::poly2nb(cluster_anlaysis_parcels, queen = FALSE)
+  
+queen_nhbrs <- spdep::poly2nb(cluster_anlaysis_parcels, queen = TRUE)
+
+#Second we need to create a spatial weight matrix to quantify the location of the
+#parcel polygons. Parcels close to one another will have weights closer to 1; those
+#further away will have weight values closer to 0.
+
+#Second we calculate a Moran's I statistic for each parcel based on the density of 
+#arts business in each parcel. Fundamentally this is a weighted covariance. The weights
+#are those calculated in the spatial weight matrix. Moran's I falls betwee -1 and 1. Values closer to either #minimum or maximum indicate covariance -- the spatial objects are alike or the value 
+#being considered is a function of that value on the other spatial object. #Values closer to 0
+#indicate two spatial objects are not alike.
 ```
