@@ -60,6 +60,15 @@ lat_lon_CRS <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
 LUC_Descriptions <- read.csv(
   "C:/Project_Work/Local_Data/Parcel_DB/comprehensive_adj_use.code_xwalk.csv"
 )
+
+#reading in MAPC's municipalities shapefile
+mapc_municipalities <- st_read("https://services.arcgis.com/c5WwApDsDjRhIVkH/arcgis/rest/services/MA_Municipalities/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson") |>   
+  select(town_id, geometry) |> 
+  rename(muni_id = town_id) |> 
+  left_join(
+    keys,
+    by = c("muni_id")
+  )
 ```
 
 1.0 Load relevant data
@@ -500,7 +509,10 @@ bar_graph.1 <- arts.biz_by.naics |>
   ggplot(aes(x = reorder(NAICSD, businesses), y = businesses)) +
   geom_bar(stat = "identity", color = "black", fill = "steelblue") +
   geom_text(aes(label = scales::comma(businesses)), vjust = -0.3, size = 3.5) +
-  scale_x_discrete(limits = rev) +
+  scale_x_discrete(
+    limits = rev,
+    labels = scales::label_wrap(10)
+  ) +
   scale_y_continuous(label = scales::comma) +
   labs(
     title = "Arts Businesses by NAICS (Top 10)",
@@ -509,7 +521,7 @@ bar_graph.1 <- arts.biz_by.naics |>
   ) +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(color = "black", angle = 90, vjust = 0.5, hjust = 1),
+    axis.text.x = element_text(color = "black"),
     axis.text.y = element_text(color = "black")
   )
 
@@ -533,7 +545,7 @@ bar_graph.2 <- arts.biz_by.naics |>
   ggplot(aes(x = reorder(NAICSD, employment), y = employment)) +
   geom_bar(stat = "identity", color = "black", fill = "lavender") +
   geom_text(aes(label = scales::comma(employment)), vjust = -0.3, size = 3.5) +
-  scale_x_discrete(limits = rev) +
+  scale_x_discrete(limits = rev, labels = scales::label_wrap(10)) +
   scale_y_continuous(label = scales::comma) +
   labs(
     title = "Arts Employment by NAICS (Top 10)",
@@ -564,7 +576,7 @@ bar_graph.3 <- arts.biz_by.naics |>
   ggplot(aes(x = reorder(NAICSD, emp.by.biz), y = emp.by.biz)) +
   geom_bar(stat = "identity", color = "black", fill = "lightgreen") +
   geom_text(aes(label = scales::comma(emp.by.biz)), vjust = -0.3, size = 3.5) +
-  scale_x_discrete(limits = rev) +
+  scale_x_discrete(limits = rev, labels = scales::label_wrap(7)) +
   scale_y_continuous(label = scales::comma) +
   labs(
     title = "Avg. Arts Employment Per Businesses by Municipality (Top 10)",
@@ -652,6 +664,97 @@ write.csv(
   paste0(output_path, "businesses_by_LUC.type.csv")
 )
 
+#Create a bar chart of Top 10 municipalities by avg. employment per business
+bar_graph.1 <- Biz_by_LUC |> 
+  arrange(
+    desc(Num_Business)
+  ) |> 
+  dplyr::slice(1:10) |> 
+  ggplot(aes(x = reorder(USE_CODE_SYMB, Num_Business), y = Num_Business)) +
+  geom_bar(stat = "identity", color = "black", fill = "steelblue") +
+  geom_text(aes(label = scales::comma(Num_Business)), vjust = -0.3, size = 3.5) +
+  scale_x_discrete(limits = rev, labels = scales::label_wrap(10)) +
+  scale_y_continuous(label = scales::comma) +
+  labs(
+    title = "Businesses by Land Use Type (Top 10)",
+    x = "Land Use Type",
+    y = "Number of Businesses"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.text.y = element_text(color = "black")
+  )
+
+bar_graph.1
+
+ggsave(
+  filename = "top10_LUC_by_arts.business.jpeg",
+  plot = bar_graph.1,
+  device = "jpeg",
+  path = output_path
+)
+
+bar_graph.2 <- Biz_by_LUC |> 
+  arrange(
+    desc(Employment)
+  ) |> 
+  dplyr::slice(1:10) |> 
+  ggplot(aes(x = reorder(USE_CODE_SYMB, Employment), y = Employment)) +
+  geom_bar(stat = "identity", color = "black", fill = "lavender") +
+  geom_text(aes(label = scales::comma(Employment)), vjust = -0.3, size = 3.5) +
+  scale_x_discrete(limits = rev, labels = scales::label_wrap(10)) +
+  scale_y_continuous(label = scales::comma) +
+  labs(
+    title = "Employment by Land Use Type (Top 10)",
+    x = "Land Use Type",
+    y = "Employment"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.text.y = element_text(color = "black")
+  )
+
+bar_graph.2
+
+ggsave(
+  filename = "top10_LUC_by_arts.employment.jpeg",
+  plot = bar_graph.2,
+  device = "jpeg",
+  path = output_path
+)
+
+bar_graph.3 <- Biz_by_LUC |> 
+  arrange(
+    desc(Avg_emp)
+  ) |> 
+  dplyr::slice(1:10) |> 
+  ggplot(aes(x = reorder(USE_CODE_SYMB, Avg_emp), y = Avg_emp)) +
+  geom_bar(stat = "identity", color = "black", fill = "lightgreen") +
+  geom_text(aes(label = scales::comma(Avg_emp)), vjust = -0.3, size = 3.5) +
+  scale_x_discrete(limits = rev, labels = scales::label_wrap(10)) +
+  scale_y_continuous(label = scales::comma) +
+  labs(
+    title = "Average Employment per Business by Land Use Type (Top 10)",
+    x = "Land Use Type",
+    y = "Avg. Employment per Business"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.text.y = element_text(color = "black")
+  )
+
+bar_graph.3
+
+ggsave(
+  filename = "top10_LUC_by_arts.avgempbybusiness.jpeg",
+  plot = bar_graph.3,
+  device = "jpeg",
+  path = output_path
+)
+
 #Businesses by land use codes and 6-Digit NAICS
 Biz_by_LUC_by_NAICS <- biz_in_parcel |> 
   group_by(
@@ -674,6 +777,101 @@ Biz_by_LUC_by_NAICS <- biz_in_parcel |>
 write.csv(
   Biz_by_LUC_by_NAICS,
   paste0(output_path, "businesses_by_LUC.type_by_NAICS.csv")
+)
+
+Biz_on_Ind.Parcels_by_NAICS <- Biz_by_LUC_by_NAICS |> 
+  filter(
+    USE_CODE_SYMB == "Industrial" | USE_CODE_SYMB == "Industrial Vacant"
+  )
+
+bar_graph.4 <- Biz_on_Ind.Parcels_by_NAICS |> 
+  arrange(
+    desc(Num_Business)
+  ) |> 
+  dplyr::slice(1:10) |> 
+  ggplot(aes(x = reorder(NAICSD, Num_Business), y = Num_Business)) +
+  geom_bar(stat = "identity", color = "black", fill = "steelblue") +
+  geom_text(aes(label = scales::comma(Num_Business)), vjust = -0.3, size = 3.5) +
+  scale_x_discrete(limits = rev, labels = scales::label_wrap(10)) +
+  scale_y_continuous(label = scales::comma) +
+  labs(
+    title = "Number of Business on Industrial Parcels (Top 10, MAPC Region)",
+    x = "NAICS Description",
+    y = "Number of Businesses"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.text.y = element_text(color = "black")
+  )
+
+bar_graph.4
+
+ggsave(
+  filename = "top10_Arts.Biz_Ind.Parcels.jpeg",
+  plot = bar_graph.4,
+  device = "jpeg",
+  path = output_path
+)
+
+bar_graph.5 <- Biz_on_Ind.Parcels_by_NAICS |> 
+  arrange(
+    desc(Employment)
+  ) |> 
+  dplyr::slice(1:10) |> 
+  ggplot(aes(x = reorder(NAICSD, Employment), y = Employment)) +
+  geom_bar(stat = "identity", color = "black", fill = "lavender") +
+  geom_text(aes(label = scales::comma(Employment)), vjust = -0.3, size = 3.5) +
+  scale_x_discrete(limits = rev, labels = scales::label_wrap(10)) +
+  scale_y_continuous(label = scales::comma) +
+  labs(
+    title = "Employment in Arts Businesses on Industrial Parcels (Top 10, MAPC Region)",
+    x = "NAICS Description",
+    y = "Employment"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.text.y = element_text(color = "black")
+  )
+
+bar_graph.5
+
+ggsave(
+  filename = "top10_Arts.Emp_Ind.Parcels.jpeg",
+  plot = bar_graph.5,
+  device = "jpeg",
+  path = output_path
+)
+
+bar_graph.6 <- Biz_on_Ind.Parcels_by_NAICS |> 
+  arrange(
+    desc(Avg_emp)
+  ) |> 
+  dplyr::slice(1:10) |> 
+  ggplot(aes(x = reorder(NAICSD, Avg_emp), y = Avg_emp)) +
+  geom_bar(stat = "identity", color = "black", fill = "lightgreen") +
+  geom_text(aes(label = scales::comma(Avg_emp)), vjust = -0.3, size = 3.5) +
+  scale_x_discrete(limits = rev, labels = scales::label_wrap(10)) +
+  scale_y_continuous(label = scales::comma) +
+  labs(
+    title = "Avg. Employment in Arts Businesses on Industrial Parcels (Top 10, MAPC Region)",
+    x = "NAICS Description",
+    y = "Avg. Employment per Business"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(color = "black"),
+    axis.text.y = element_text(color = "black")
+  )
+
+bar_graph.6
+
+ggsave(
+  filename = "top10_Arts.Avg.Emp.Biz_Ind.Parcels.jpeg",
+  plot = bar_graph.6,
+  device = "jpeg",
+  path = output_path
 )
 
 #Businesses by Land Use Code and Municipality
@@ -699,14 +897,42 @@ write.csv(
   paste0(output_path, "businesses_by_LUC.type_by_Muni.csv")
 )
 
+#Businesses by Land Use Code, NAICS, and Municipality
+Biz_by_LUC_by_NAICS_Muni <- biz_in_parcel |> 
+  group_by(
+    USE_CODE_SYMB,
+    NAICSD,
+    NAICS.6,
+    muni_name
+  ) |> 
+  summarise(
+    Num_Business = n(),
+    Employment = sum(LOCEMP),
+    Avg_emp = round(Employment/Num_Business, 2)
+  ) |> 
+  ungroup() |> 
+  na.omit() |> 
+  st_drop_geometry() |> 
+  arrange(
+    desc(Num_Business)
+  )
+
+write.csv(
+ Biz_by_LUC_by_NAICS_Muni,
+  paste0(output_path, "businesses_by_LUC.type_by_NAICS_by_Muni.csv")
+)
+
 ```
 
 4.0 Spatial Analysis
+4.1 General Municipal Maps
 ```{r}
+#Set the muninipality that you would like to map
+set_muni <- ""
 #Lets visualize the parcels that do have arts businesses in them
 waltham_parcels_full <- mapc_parcels |> 
   filter(
-    CITY == "Somerville"
+    CITY == "Watertown"
   ) |> 
   left_join(
     Parcel_Biz,
@@ -714,13 +940,23 @@ waltham_parcels_full <- mapc_parcels |>
   ) |> 
   mutate(
     biz = tidyr::replace_na(biz, 0),
-    emp = tidyr::replace_na(emp, 0)
+    emp = tidyr::replace_na(emp, 0),
+    biz_bins = case_when(
+      biz <= 0 ~ "0",
+      biz == 1 ~ "1",
+      biz == 2 ~"2",
+      biz >= 3 & biz <= 5 ~ "3-5",
+      biz >= 6 & biz <= 10 ~ "6-10",
+      biz >= 11 & biz <= 15 ~ "11-15",
+      biz >= 16 & biz <= 20 ~ "16-20",
+      biz >= 21 & biz <= 25 ~ "21-25",
+      biz >= 26 & biz <= 30 ~ "26-30",
+      biz > 30 ~"> 30"
+    ),
+    ind_intersect = if_else(
+      (USE_CODE_SYMB == "Industrial" | USE_CODE_SYMB == "Industrial Vacant") & biz > 0, 1, 0
+    )
   )
-
-#
-ggplot() +
-  geom_sf(data = waltham_parcels_full, aes(fill = biz), linewidth = 0) +
-  theme_minimal()
 
 #
 waltham_parcels_ind <- waltham_parcels_full |> 
@@ -728,9 +964,100 @@ waltham_parcels_ind <- waltham_parcels_full |>
     USE_CODE_SYMB == "Industrial" | USE_CODE_SYMB == "Industrial Vacant"
   )
 
-ggplot() +
-  geom_sf(data = waltham_parcels_full, aes(fill = biz), color = NA) +
-  geom_sf(data = waltham_parcels_ind, aes(color = USE_CODE_SYMB), fill = NA) +
-  theme_minimal()
+muni_boundary <- mapc_municipalities |> 
+  filter(
+    muni_name == "Watertown"
+  )
 
+#Second Biz
+points <- mapc_biz.spatial |> 
+  filter(
+    STCITY_CLEAN == "Watertown" & OBJECT_ID != "169672"
+  )
+
+map.1 <- ggplot() +
+  geom_sf(data = waltham_parcels_full, fill = NA, color = "grey")+
+  geom_sf(data = points) +
+  geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5) +
+  labs(
+    title = "Point Location of Arts Businesses in Watertown (2023)"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
+  )
+
+ggsave(
+  filename = "BizPoints_Watertown.jpeg",
+  plot = map.1,
+  device = "jpeg",
+  path = output_path
+)
+
+map.2 <- ggplot() +
+  geom_sf(data = waltham_parcels_full, linewidth = 0.001, aes(fill = biz), color = "grey") +
+  scale_fill_continuous(
+    high = "purple", low = "white",
+    breaks = c(
+      min(waltham_parcels_full$biz),
+      round(max(waltham_parcels_full$biz)*(1/3),0),
+      round(max(waltham_parcels_full$biz)*(2/3),0),
+      max(waltham_parcels_full$biz)),
+    name = "Number of\nBusinesses"
+  ) +
+  geom_sf(data = waltham_parcels_ind, aes(color = USE_CODE_SYMB), fill = NA, linewidth = 0.8) +
+  scale_color_discrete(
+    name = "Industrial Parcels"
+  ) +
+  geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5) +
+  labs(
+    title = "Density of Arts Businesses in Watertown (2023)"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
+  )
+
+map.2
+
+ggsave(
+  filename = "BizDensity_Watertown.jpeg",
+  plot = map.2,
+  device = "jpeg",
+  path = output_path
+)
+
+map.3 <- ggplot() +
+  geom_sf(data = waltham_parcels_full, aes(fill = as.factor(ind_intersect)), color = "grey") +
+  scale_fill_manual(
+    values = c("white", "purple"),
+    name = "Industrial Parcels\nwith Arts Businesses"
+  ) +
+  geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5) +
+  labs(
+    title = "Intersect of Arts Businesses & Industrial Parcels in Watertown (2023)"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
+  )
+
+ggsave(
+  filename = "BizIndIntersect_Watertown.jpeg",
+  plot = map.3,
+  device = "jpeg",
+  path = output_path
+)
 ```
