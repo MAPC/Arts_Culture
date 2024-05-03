@@ -320,6 +320,10 @@ address_check <- biz_in_parcel |>
 hp_biz <- mapc_biz.spatial |> 
   filter(
     stringr::str_detect(STADDR, "Corporate Park Dr") & STCITY_CLEAN == "Pembroke"
+  ) |> 
+  #Removing a duplicate business
+  filter(
+    OBJECT_ID != "199458"
   )
 
 #Filter for parcel polygons on Corporate Park Drive
@@ -420,7 +424,7 @@ norwood.map <- ggplot() +
   ) +
   geom_sf(data = missing_biz_parcel, fill = NA, color = "red", linewidth = 1.0) +
   labs(
-      title = "DataAxle is Missing Established Arts Spaces (Norwood Space Center) In Norwood",
+      title = "DataAxle is Missing Established Arts Spaces \n(Norwood Space Center) In Norwood",
     subtitle = "Morse Street Parcels and Arts Businesses (blue) \n83 Morse Street Parcel is Missing \nShould be where the leftmost points are located",
   ) +
   theme_minimal() +
@@ -463,9 +467,6 @@ Parcel_Biz <- biz_in_parcel |>
 3.0 Tabular Analysis
 3.1 Arts Businesses by Town and NAICS
 ```{r}
-#Set output path for the tables and visualizations associated with this analysis
-output_path <- "C:/Project_Work/Arts_Culture/Industrial Landuse x Creative Economy/Data/Outputs/"
-
 #Make a non-sf object copy of the spatialized arts business data to more
 #easily facilitate tabular analysis.
 data.axle_arts.spaces_mapc <- mapc_biz.spatial |> st_drop_geometry()
@@ -793,8 +794,6 @@ write.csv(
 
 3.2 Arts Businesses by Land Use Codes
 ```{r}
-output_path <- "C:/Project_Work/Arts_Culture/Industrial Landuse x Creative Economy/Data/Outputs/"
-
 #Density plot of employment of arts businesses in parcel
 print(summary(biz_in_parcel |> select()))
 
