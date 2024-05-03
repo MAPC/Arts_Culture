@@ -78,6 +78,9 @@ mapc_municipalities <- st_read("https://services.arcgis.com/c5WwApDsDjRhIVkH/arc
 #Reading in some municipal boundaries
 nbhds <- st_read("K:/DataServices/Datasets/Boundaries/Spatial/bos_qcy_svl_cam_arl_nbhds/partnercity_nbhds.shp")
 
+#Create centoids of the neighborhood shapefiles to zoom into the nbhd in maps.
+nbhds_centroids <- st_point_on_surface(nbhds)
+
 #Reading in the Fabrication (Fab) Zoning District for Somerville analysis
 fab_dist <- st_read("C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Spatial/Zoning.shp") |> filter(ZoneCode == "FAB")
 
@@ -1298,10 +1301,6 @@ map.1 <- ggplot() +
   geom_sf(data = municipal_parcels, fill = NA, color = "grey")+
   geom_sf(data = points) +
   geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5) +
-  geom_sf(data = fab_dist, fill = NA, aes(color = ZoneCode), linewidth = 0.8) +
-  scale_color_discrete(
-    name = "Fabrication Zoning District"
-  ) +
   labs(
     title = paste0("Point Location of Arts Businesses in ", set_muni, " (2023)")
   ) +
@@ -1389,12 +1388,42 @@ ggsave(
   device = "jpeg",
   path = output_path
 )
+
+map.4 <- ggplot() +
+  geom_sf(data = municipal_parcels, fill = NA, color = "grey")+
+  geom_sf(data = points) +
+  geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5) +
+  geom_sf(data = fab_dist, fill = NA, color = "maroon", linewidth = 0.8) +
+  scale_color_discrete(
+    name = "Fabrication Zoning District"
+  ) +
+  labs(
+    title = paste0("Point Location of Arts Businesses in ", set_muni, " (2023)"),
+    subtitle = "Fabrication Zoning District Boundaries (maroon)"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
+  )
+
+map.4
+
+ggsave(
+  filename = paste0("BizPoint_FAB.District_",set_muni,".jpeg"),
+  plot = map.4,
+  device = "jpeg",
+  path = output_path
+)
 ```
 
 4.3 Cambridge Maps
 ```{r}
 #Set the municipality that you would like to map
-set_muni <- "Pembroke"
+set_muni <- "Cambridge"
 
 #Visualize the parcels that do have arts businesses in them
 municipal_parcels <- mapc_parcels |> 
@@ -1480,10 +1509,10 @@ map.2 <- ggplot() +
   scale_fill_continuous(
     high = "purple", low = "white",
     breaks = c(
-      min(waltham_parcels_full$biz),
-      round(max(waltham_parcels_full$biz)*(1/3),0),
-      round(max(waltham_parcels_full$biz)*(2/3),0),
-      max(waltham_parcels_full$biz)),
+      min(municipal_parcels$biz),
+      round(max(municipal_parcels$biz)*(1/3),0),
+      round(max(municipal_parcels$biz)*(2/3),0),
+      max(municipal_parcels$biz)),
     name = "Number of/nBusinesses"
   )+
   geom_sf(data = municipal_parcels_ind, aes(color = USE_CODE_SYMB), fill = NA, linewidth = 0.8)+
@@ -1537,6 +1566,101 @@ map.3
 ggsave(
   filename = paste0("BizIndIntersect_",set_muni,".jpeg"),
   plot = map.3,
+  device = "jpeg",
+  path = output_path
+)
+
+#Map 4: Point locations of arts businsesses over a parcel map of a municipality with neighborhoods
+muni_nbhd <- nbhds |> 
+  filter(
+    muni == set_muni
+  )
+
+muni_nbhd_centroids <- nbhds_centroids |> 
+  filter(
+    muni == set_muni
+  )
+
+#East Cambridge
+zoom_to <- muni_nbhd_centroids |>
+  filter(Nhood == "East Cambridge") |>
+  extract(geometry, into = c('Lat', 'Lon'), '\\((.*),(.*)\\)', conv = T) |>
+  select(
+    Lat,
+    Lon
+  ) |> 
+  mutate(
+    across(everything(), as.numeric)
+  )
+
+zoom_level <- 7
+
+lon_span <- 360/2^zoom_level
+lat_span <- 180/2^zoom_level
+
+lon_bounds <- c(as.numeric(zoom_to[1] - lon_span/2)[1], as.numeric(zoom_to[1] + lon_span/2)[1])
+lat_bounds <- c(as.numeric(zoom_to[2] - lat_span/2)[1], as.numeric(zoom_to[2] + lat_span/2)[1])
+
+lon_min <- as.numeric(zoom_to[1] - lon_span/2)[1]
+lon_max <- as.numeric(zoom_to[1] + lon_span/2)[1]
+lat_min <- as.numeric(zoom_to[2] - lat_span/2)[1]
+lat_max <- as.numeric(zoom_to[2] + lat_span/2)[1]
+
+municipal_parcels_cropped <- st_crop(
+  municipal_parcels,
+  xmin = lon_min,
+  xmax = lon_max,
+  ymin = lat_min,
+  ymax = lat_max
+)
+
+zoom_to <- zoom_to |> 
+  #Converting the non-spatial data into a spatial object.
+  st_as_sf(
+    #coords = c("LONGITUDE", "LATITUDE"),
+    coords = c("Lon","Lat"),
+    crs = st_crs(lat_lon_CRS),
+    remove = FALSE
+  ) |>
+  #Setting CRS to match the polygon's CRS.
+  st_transform(
+    mass_mainland,
+    crs = st_crs(mapc_parcels)
+  )
+
+#view(lon_bounds)
+
+map.4 <- ggplot() +
+  geom_sf(data = municipal_parcels, fill = NA, color = "grey")+
+  geom_sf(data = points) +
+  geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5) +
+  geom_sf(data = muni_nbhd, fill = NA, color = "black", linewidth = 0.5) +
+  #geom_sf(data = municipal_parcels_cropped) +
+  #geom_sf(data = zoom_to) +
+  coord_sf(xlim = lon_bounds, ylim = lat_bounds) +
+  #geom_label_repel(
+    #data = muni_nbhd,
+    #aes(label = Nhood, geometry = geometry),
+    #stat = "sf_coordinates",
+    #min.segment.length = 0
+  #) +
+  labs(
+    title = paste0("Point Location of Arts Businesses in ", set_muni, " (2023)")
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
+  )
+
+map.4
+
+ggsave(
+  filename = paste0("BizPoints_",set_muni,".jpeg"),
+  plot = map.1,
   device = "jpeg",
   path = output_path
 )
