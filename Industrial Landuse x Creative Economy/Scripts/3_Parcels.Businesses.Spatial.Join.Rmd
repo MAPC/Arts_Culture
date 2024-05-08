@@ -1573,8 +1573,12 @@ ggsave(
 #Map 4: Point locations of arts businsesses over a parcel map of a municipality with neighborhoods
 muni_nbhd <- nbhds |> 
   filter(
-    muni == set_muni
+    muni == set_muni & Nhood == "East Cambridge"
   )
+
+nhood_parcels <- municipal_parcels[muni_nbhd,]
+
+nhood_points <- points[muni_nbhd,]
 
 muni_nbhd_centroids <- nbhds_centroids |> 
   filter(
@@ -1631,13 +1635,13 @@ zoom_to <- zoom_to |>
 #view(lon_bounds)
 
 map.4 <- ggplot() +
-  geom_sf(data = municipal_parcels, fill = NA, color = "grey")+
-  geom_sf(data = points) +
-  geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5) +
+  geom_sf(data = nhood_parcels, fill = NA, color = "grey")+
+  geom_sf(data = nhood_points) +
+  #geom_sf(data = muni_boundary, fill = NA, color = "black", linewidth = 0.5) +
   geom_sf(data = muni_nbhd, fill = NA, color = "black", linewidth = 0.5) +
   #geom_sf(data = municipal_parcels_cropped) +
   #geom_sf(data = zoom_to) +
-  coord_sf(xlim = lon_bounds, ylim = lat_bounds) +
+  #coord_sf(xlim = lon_bounds, ylim = lat_bounds) +
   #geom_label_repel(
     #data = muni_nbhd,
     #aes(label = Nhood, geometry = geometry),
@@ -1669,7 +1673,7 @@ ggsave(
 4.4 Boston Maps
 ```{r}
 #Set the municipality that you would like to map
-set_muni <- "Pembroke"
+set_muni <- "Boston"
 
 #Visualize the parcels that do have arts businesses in them
 municipal_parcels <- mapc_parcels |> 
@@ -1815,6 +1819,35 @@ ggsave(
   device = "jpeg",
   path = output_path
 )
+
+#Map 4:
+
+muni_nbhd <- nbhds |> 
+  filter(
+    muni == set_muni & Nhood == "Allston/Brighton"
+  )
+
+nhood_parcels <- municipal_parcels[muni_nbhd,]
+
+nhood_points <- points[muni_nbhd,]
+
+map.4 <- ggplot() +
+  geom_sf(data = nhood_parcels, fill = NA, color = "grey")+
+  geom_sf(data = nhood_points) +
+  geom_sf(data = muni_nbhd, fill = NA, color = "black", linewidth = 0.5) +
+  labs(
+    title = paste0("Point Location of Arts Businesses in ", muni_nbhd[2], " (2023)")
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
+  )
+
+map.4
 ```
 
 4.5 Business Cluster Analysis
