@@ -76,7 +76,7 @@ mapc_municipalities <- st_read("https://services.arcgis.com/c5WwApDsDjRhIVkH/arc
   )
 
 #Reading in some municipal boundaries
-nbhds <- st_read("K:/DataServices/Datasets/Boundaries/Spatial/bos_qcy_svl_cam_arl_nbhds/partnercity_nbhds.shp")
+nbhds <- st_read("C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use/Data/Spatial/partnercity_nbhds.shp")
 
 #Create centoids of the neighborhood shapefiles to zoom into the nbhd in maps.
 nbhds_centroids <- st_point_on_surface(nbhds)
