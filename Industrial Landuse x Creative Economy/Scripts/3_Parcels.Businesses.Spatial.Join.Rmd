@@ -21,6 +21,7 @@ require(readxl)
 require(ggplot2)
 require(spdep)
 require(ggrepel)
+require(gt)
 #source("C:/Project_Work/Arts_Culture/Industrial Landuse x Creative Economy/Scripts/municipal_name_fix.func.R")
 
 #Load in data keys to add geographies to data later on.
@@ -499,16 +500,16 @@ write.csv(
 tbl.1 <- arts.biz_by.town |>
   dplyr::slice(1:10) |> 
   gt() |> 
-  tab_header(
+  gt::tab_header(
     title = "NEFA Arts Businesses by Municipality - MAPC"
   ) |> 
-  cols_label(
+  gt::cols_label(
     STCITY_CLEAN = "Municipality",
     businesses = "Businesses",
     employment = "Employment",
     emp.by.biz = "Avg. Employment Per Business"
   ) |> 
-  fmt_number(
+  gt::fmt_number(
     columns = c("businesses", "employment"),
     sep_mark = ",",
     decimals = 0
@@ -1861,7 +1862,7 @@ map.4
 #to parcels with borders in contact with each other. Queen contiguity refers to parcels with borders that are near to each other in all directions.
 
 #Set Muni we want to evaluate (as a proof of concept)
-set_muni <- "Waltham"
+set_muni <- "Cambridge"
 
 #Create a separate set of parcel data for the test municipality
 cluster_anlaysis_parcels <- mapc_parcels |> 
@@ -1887,10 +1888,23 @@ queen_nhbrs <- spdep::poly2nb(cluster_anlaysis_parcels, queen = TRUE)
 #Second we need to create a spatial weight matrix to quantify the location of the
 #parcel polygons. Parcels close to one another will have weights closer to 1; those
 #further away will have weight values closer to 0.
+lw_rook <- nb2listw(rook_nhbrs, style = "W", zero.policy = TRUE)
 
-#Second we calculate a Moran's I statistic for each parcel based on the density of 
+lw_queen <- nb2listw(queen_nhbrs, style = "W", zero.policy = TRUE)
+
+#Third we calculate a Moran's I statistic for each parcel based on the density of 
 #arts business in each parcel. Fundamentally this is a weighted covariance. The weights
 #are those calculated in the spatial weight matrix. Moran's I falls betwee -1 and 1. Values closer to either #minimum or maximum indicate covariance -- the spatial objects are alike or the value 
 #being considered is a function of that value on the other spatial object. #Values closer to 0
 #indicate two spatial objects are not alike.
+I_rook <- moran(cluster_anlaysis_parcels$biz, lw_rook, length(rook_nhbrs), Szero(lw_rook))
+I_rook[1]
+
+I_queen <- moran(cluster_anlaysis_parcels$biz, lw_queen, length(queen_nhbrs), Szero(lw_queen))
+I_queen[1]
+
+#Fourth
+moran.test(cluster_anlaysis_parcels$biz, lw_rook, alternative = "greater")
+
+moran.test(cluster_anlaysis_parcels$biz, lw_queen, alternative = "greater")
 ```
