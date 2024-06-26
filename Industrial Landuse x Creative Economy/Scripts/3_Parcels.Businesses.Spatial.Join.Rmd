@@ -1924,3 +1924,7 @@ moran.test(cluster_anlaysis_parcels$biz, lw_rook, alternative = "greater")
 
 moran.test(cluster_anlaysis_parcels$biz, lw_queen, alternative = "greater")
 ```
+
+K Nearest Neighbor Clusters
+```{r}
+```
