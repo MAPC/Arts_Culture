@@ -5,7 +5,7 @@ date: "2024-03-28"
 output: html_document
 ---
 
-0.0 Set up
+# 0.0 Set up
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
@@ -87,7 +87,7 @@ fab_dist <- st_read("C:/Project_Work/Local_Data/Arts_Culture/Industrial_Land_Use
 
 ```
 
-1.0 Load relevant data
+# 1.0 Load relevant data
 ```{r}
 #1.1 Parcels
 #Load the parcel polygons
@@ -120,7 +120,7 @@ mapc_biz.spatial <- readRDS(
   )
 ```
 
-2.0 Land Use Code Descriptions + Symbology
+# 2.0 Land Use Code Descriptions + Symbology
 ```{r}
 mapc_parcels <- mapc_parcels |> 
     mutate(
@@ -168,7 +168,7 @@ mapc_parcels <- mapc_parcels |>
   )
 ```
 
-2.1 Putting the points into the polygons
+# 2.1 Putting the points into the polygons
 ```{r}
 #Testing that the points are projected similar to the polygons.
 #Using Stow as an example because it's small + has only a few points
@@ -196,7 +196,7 @@ biz_in_parcel <- st_join(mapc_biz.spatial, mapc_parcels, join = st_within)
 #parcel_w_biz <- st_join(mapc_parcels, mapc_biz.spatial, join = st_within)
 ```
 
-2.2 QA/QC SMall Muni Check
+# 2.2 QA/QC SMall Muni Check
 ```{r}
 address_check <- biz_in_parcel |> 
   select(
@@ -237,7 +237,7 @@ ggplot()+
   
 ```
 
-2.3 Medium Muni Check
+# 2.3 Medium Muni Check
 ```{r}
 #Dataset to check address matching
 address_check <- biz_in_parcel |> 
@@ -297,7 +297,7 @@ ggplot() +
 
 #Here we have an example of the parcel data not having am address (or parcel) that matches the address of the business (56 Dexter Ave vs 32 Dexter Street). That said, 56 Dexter Ave was geocoded to the appropriate location (no 56 Dexter Ave exists.)
 ```
-2.4 Pembroke Missing Arts Businesses Visualization
+# 2.4 Pembroke Missing Arts Businesses Visualization
 ```{r}
 #Select the relevant information from the point in polygon join
 address_check <- biz_in_parcel |> 
@@ -356,6 +356,8 @@ pembroke.map <- ggplot() +
   labs(
     title = "DataAxle is Missing Established Arts Businesses \n(Soundcheck Studios) In Pembroke",
     subtitle = "Corporate Park Drive Parcels and Arts Businesses (blue) \n150 Corporate Park Drive (red)",
+    y = "",
+    x = ""
   ) +
   theme_minimal() +
   theme(
@@ -375,7 +377,7 @@ ggsave(
   path = output_path
 )
 ```
-2.4 Norwood Missing Arts Businesses Visualization
+# 2.4 Norwood Missing Arts Businesses Visualization
 ```{r}
 #Select the relevant information from the point in polygon join
 address_check <- biz_in_parcel |> 
@@ -430,6 +432,8 @@ norwood.map <- ggplot() +
   labs(
       title = "DataAxle is Missing Established Arts Spaces \n(Norwood Space Center) In Norwood",
     subtitle = "Morse Street Parcels and Arts Businesses (blue) \n83 Morse Street Parcel is Missing \nShould be where the leftmost points are located",
+    y = "",
+    x = ""
   ) +
   theme_minimal() +
   theme(
@@ -450,7 +454,7 @@ ggsave(
 )
 ```
 
-2.5 Creating a Parcel-level Count of Businesses and Employment
+# 2.5 Creating a Parcel-level Count of Businesses and Employment
 ```{r}
 #Table to rejoin to parcel geometries for spatial visualization
 Parcel_Biz <- biz_in_parcel |> 
@@ -468,8 +472,8 @@ Parcel_Biz <- biz_in_parcel |>
 ```
 
 
-3.0 Tabular Analysis
-3.1 Arts Businesses by Town and NAICS
+# 3.0 Tabular Analysis
+# 3.1 Arts Businesses by Town and NAICS
 ```{r}
 #Make a non-sf object copy of the spatialized arts business data to more
 #easily facilitate tabular analysis.
@@ -796,7 +800,7 @@ write.csv(
 #
 ```
 
-3.2 Arts Businesses by Land Use Codes
+# 3.2 Arts Businesses by Land Use Codes
 ```{r}
 #Density plot of employment of arts businesses in parcel
 print(summary(biz_in_parcel |> select()))
@@ -1088,8 +1092,8 @@ write.csv(
 
 ```
 
-4.0 Spatial Analysis
-4.1 General Municipal Maps
+# 4.0 Spatial Analysis
+# 4.1 General Municipal Maps
 ```{r}
 #Set the municipality that you would like to map
 set_muni <- "Pembroke"
@@ -1421,7 +1425,7 @@ ggsave(
 )
 ```
 
-4.3 Cambridge Maps
+# 4.3 Cambridge Maps
 ```{r}
 #Set the municipality that you would like to map
 set_muni <- "Cambridge"
@@ -1514,9 +1518,9 @@ map.2 <- ggplot() +
       round(max(municipal_parcels$biz)*(1/3),0),
       round(max(municipal_parcels$biz)*(2/3),0),
       max(municipal_parcels$biz)),
-    name = "Number of/nBusinesses"
+    name = "Number of Businesses"
   )+
-  geom_sf(data = municipal_parcels_ind, aes(color = USE_CODE_SYMB), fill = NA, linewidth = 0.8)+
+  geom_sf(data = municipal_parcels_ind, aes(color = USE_CODE_SYMB), fill = NA, linewidth = 0.4)+
   scale_color_discrete(
     name = "Industrial Parcels"
   )+
@@ -1539,7 +1543,10 @@ ggsave(
   filename = paste0("BizDensity_",set_muni,".jpeg"),
   plot = map.2,
   device = "jpeg",
-  path = output_path
+  path = output_path,
+  height = 5,
+  width = 10,
+  dpi = 300
 )
 
 #Map 3: Highlights where arts businsesses intersect with industrial parcels
@@ -1574,7 +1581,7 @@ ggsave(
 #Map 4: Point locations of arts businsesses over a parcel map of a municipality with neighborhoods
 muni_nbhd <- nbhds |> 
   filter(
-    muni == set_muni & Nhood == "East Cambridge"
+    muni == set_muni & Nhood == "North Cambridge"
   )
 
 nhood_parcels <- municipal_parcels[muni_nbhd,]
@@ -1588,7 +1595,7 @@ muni_nbhd_centroids <- nbhds_centroids |>
 
 #East Cambridge
 zoom_to <- muni_nbhd_centroids |>
-  filter(Nhood == "East Cambridge") |>
+  filter(Nhood == "North Cambridge") |>
   extract(geometry, into = c('Lat', 'Lon'), '\\((.*),(.*)\\)', conv = T) |>
   select(
     Lat,
@@ -1650,7 +1657,7 @@ map.4 <- ggplot() +
     #min.segment.length = 0
   #) +
   labs(
-    title = paste0("Point Location of Arts Businesses in ", set_muni, " (2023)")
+    title = paste0("Point Location of Arts Businesses in North Cambridge (2023)")
   ) +
   theme_minimal() +
   theme(
@@ -1664,8 +1671,8 @@ map.4 <- ggplot() +
 map.4
 
 ggsave(
-  filename = paste0("BizPoints_",set_muni,".jpeg"),
-  plot = map.1,
+  filename = paste0("BizPoints_Nbhd",set_muni,".jpeg"),
+  plot = map.4,
   device = "jpeg",
   path = output_path
 )
