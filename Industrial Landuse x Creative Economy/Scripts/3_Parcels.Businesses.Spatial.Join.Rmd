@@ -1868,6 +1868,13 @@ map.4
 #There are two common methods for this: rook and queen contiguity. Rook contiguity refers
 #to parcels with borders in contact with each other. Queen contiguity refers to parcels with borders that are near to each other in all directions.
 
+#===================================================================================
+#TODO:
+# 1. Create loop which tests all MAPC municipalities
+# 2. Save results of test to a single data.frame
+# 3. test MAPC as a whole
+#===================================================================================
+
 #Set Muni we want to evaluate (as a proof of concept)
 set_muni <- "Cambridge"
 
@@ -1934,4 +1941,8 @@ moran.test(cluster_anlaysis_parcels$biz, lw_queen, alternative = "greater")
 
 K Nearest Neighbor Clusters
 ```{r}
+#===================================================================================
+# TODO:
+# 1. Figure out how to use distance as the factor to create KNN groups
+#===================================================================================
 ```
