@@ -1956,7 +1956,7 @@ for (i in munis) {
       biz = tidyr::replace_na(biz, 0),
       emp = tidyr::replace_na(emp, 0)
     )
-  
+  # First, determine the neighbor matrix for each parcel using the rook and queen method.
   rook_nhbrs <- spdep::poly2nb(cluster_anlaysis_parcels, queen = FALSE)
   
   queen_nhbrs <- spdep::poly2nb(cluster_anlaysis_parcels, queen = TRUE)
@@ -1987,36 +1987,61 @@ for (i in munis) {
   #are those calculated in the spatial weight matrix. Moran's I falls betwee -1 and 1. Values closer to either #minimum or maximum indicate covariance -- the spatial objects are alike or the value
   #being considered is a function of that value on the other spatial object. #Values closer to 0
   #indicate two spatial objects are not alike.
+  # 1. Rook Moran's I stat generation
   I_rook <- moran(cluster_anlaysis_parcels$biz, lw_rook, length(rook_nhbrs), Szero(lw_rook))
   print(I_rook[1])
   
+  # Collects the Moran I stat for the municipality being considered into a vector which will be aggregated later for review.
   I_rook.list <- bind_rows(I_rook.list, I_rook[1])
   
+  # 2. Queen Moran's I stat generation
   I_queen <- moran(cluster_anlaysis_parcels$biz, lw_queen, length(queen_nhbrs), Szero(lw_queen))
   print(I_queen[1])
   
+    # Collects the Moran I stat for the municipality being considered into a vector which will be aggregated later for review.
    I_queen.list <- bind_rows(I_queen.list, I_queen[1])
   
   # Fourth we conduct a hypothesis test. It works like a one sided t-test.
-  # For the 
+  # 1. Rook method hypothesis test
   mt.r <- moran.test(cluster_anlaysis_parcels$biz, lw_rook, alternative = "greater")
   
+  # Print the summary of the test.
   print(mt.r)
   
+    # Collects the p value for the Moran I stat hypothesis test for the municipality being considered into a vector which will be aggregated later for review. 
   Moran.test_rook.list <- bind_rows(Moran.test_rook.list, mt.r[2])
   
-  
+  # 2. Queen method hypothesis test
   mt.q <- moran.test(cluster_anlaysis_parcels$biz, lw_queen, alternative = "greater")
   
+  # Print the summary of the test.
   print(mt.q)
   
+    # Collects the p value for the Moran I stat hypothesis test for the municipality being considered into a vector which will be aggregated later for review. 
   Moran.test_queen.list <- bind_rows(Moran.test_queen.list, mt.q[2])
   
 }
 
+# Create a dataframe of muni names to bind to the associated stat vectors from the Moran's I tests in the for loop above.
 muni_names <- data.frame(munis)
 
-x <- bind_cols(muni_names, I_rook.list, Moran.test_rook.list, I_queen.list, Moran.test_queen.list)
+# Bind columns of muni names, Moran's I statistics, and p values from the Moran Tests for each municipality created in the for loop above.
+test.stat.df <- bind_cols(
+  muni_names,
+  I_rook.list, Moran.test_rook.list,
+  I_queen.list, Moran.test_queen.list
+) |> 
+  # Rename columns for comprehension.
+  dplyr::rename(
+    Rook_MoranI = I...2,
+    Rook_MoranTest_pval = p.value...3,
+    Queen_MoranI = I...4,
+    Queen_MoranTest_pval = p.value...5,
+  )
+
+# General gist -
+# MAPC as a region - yes businesses tend to cluster in parcels but those clusters are dispersed throughout the region, there isnt one area that's a central locus for arts businesses.
+# Individual municipalities - It depends! Some do not exhibit clustering phenomenon, some do! Some places the clusters are concentrated - I stat closer to 1, others more dispersed - i stat closer to -1. And some places where the businesses tend not to be evenly spread throughout the parcels in the municipality.
 
 ```
 # 5.2 Classification of Clusters
