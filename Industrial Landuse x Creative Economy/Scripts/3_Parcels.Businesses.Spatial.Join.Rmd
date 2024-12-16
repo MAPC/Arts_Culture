@@ -9,19 +9,19 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-require(tidyverse)
-require(tidycensus)
-require(lubridate)
-require(stringr)
-require(janitor)
-require(sf)
-require(mapcdatakeys)
-require(dplyr)
-require(readxl)
-require(ggplot2)
-require(spdep)
-require(ggrepel)
-require(gt)
+library(tidyverse)
+library(tidycensus)
+library(lubridate)
+library(stringr)
+library(janitor)
+library(sf)
+library(mapcdatakeys)
+library(dplyr)
+library(readxl)
+library(ggplot2)
+library(spdep)
+library(ggrepel)
+library(gt)
 #source("C:/Project_Work/Arts_Culture/Industrial Landuse x Creative Economy/Scripts/municipal_name_fix.func.R")
 
 #Load in data keys to add geographies to data later on.
@@ -1934,16 +1934,17 @@ moran.test(cluster_anlaysis_parcels$biz, lw_queen, alternative = "greater")
 #===================================================================================
 #Individual Municipality Test
 
-munis <- st_drop_geometry(mapc_municipalities) |> select(muni_name) |> pull()
+munis <- mapcdatakeys::all_muni_data_keys |> filter(mapc == 1 & !muni_name %in% c("Hamilton", "Manchester-by-the-Sea")) |>  select(muni_name) |> pull()
 
-muni_name <- NULL
+I_rook.list <- NULL
+Moran.test_rook.list <- NULL
 
-I_rook <- NULL
-
-I_queen <- NULL
+I_queen.list <- NULL
+Moran.test_queen.list <- NULL
   
 for (i in munis) {
   
+  print(paste0("Testing Spatial Autocorrelation for ", i,"."))
   #Create a separate set of parcel data for the test municipality
   cluster_anlaysis_parcels <- mapc_parcels |>
     #Filter Parcels by the municipality set at the beginning of this chunk
@@ -1969,17 +1970,17 @@ for (i in munis) {
   
   #Sidebar
   
-  biz.lag_rook <- lag.listw(lw_rook, cluster_anlaysis_parcels$biz)
-  
-  plot(biz.lag_rook ~ cluster_anlaysis_parcels$biz, pch = 16, asp = 1)
-  line.1 <- lm(biz.lag_rook ~ cluster_anlaysis_parcels$biz)
-  abline(line.1, col = "blue")
-  
-  biz.lag_queen <- lag.listw(lw_queen, cluster_anlaysis_parcels$biz)
-  
-  plot(biz.lag_queen ~ cluster_anlaysis_parcels$biz, pch = 16, asp = 1)
-  line.2 <- lm(biz.lag_queen ~ cluster_anlaysis_parcels$biz)
-  abline(line.1, col = "blue")
+  # biz.lag_rook <- lag.listw(lw_rook, cluster_anlaysis_parcels$biz)
+  # 
+  # plot(biz.lag_rook ~ cluster_anlaysis_parcels$biz, pch = 16, asp = 1)
+  # line.1 <- lm(biz.lag_rook ~ cluster_anlaysis_parcels$biz)
+  # abline(line.1, col = "blue")
+  # 
+  # biz.lag_queen <- lag.listw(lw_queen, cluster_anlaysis_parcels$biz)
+  # 
+  # plot(biz.lag_queen ~ cluster_anlaysis_parcels$biz, pch = 16, asp = 1)
+  # line.2 <- lm(biz.lag_queen ~ cluster_anlaysis_parcels$biz)
+  # abline(line.1, col = "blue")
   
   #Third we calculate a Moran's I statistic for each parcel based on the density of
   #arts business in each parcel. Fundamentally this is a weighted covariance. The weights
@@ -1987,17 +1988,35 @@ for (i in munis) {
   #being considered is a function of that value on the other spatial object. #Values closer to 0
   #indicate two spatial objects are not alike.
   I_rook <- moran(cluster_anlaysis_parcels$biz, lw_rook, length(rook_nhbrs), Szero(lw_rook))
-  I_rook[1]
+  print(I_rook[1])
+  
+  I_rook.list <- bind_rows(I_rook.list, I_rook[1])
   
   I_queen <- moran(cluster_anlaysis_parcels$biz, lw_queen, length(queen_nhbrs), Szero(lw_queen))
-  I_queen[1]
+  print(I_queen[1])
   
-  #Fourth we conduct a hypothesis test. It works like a one sided t-test.
-  moran.test(cluster_anlaysis_parcels$biz, lw_rook, alternative = "greater")
+   I_queen.list <- bind_rows(I_queen.list, I_queen[1])
   
-  moran.test(cluster_anlaysis_parcels$biz, lw_queen, alternative = "greater")
+  # Fourth we conduct a hypothesis test. It works like a one sided t-test.
+  # For the 
+  mt.r <- moran.test(cluster_anlaysis_parcels$biz, lw_rook, alternative = "greater")
+  
+  print(mt.r)
+  
+  Moran.test_rook.list <- bind_rows(Moran.test_rook.list, mt.r[2])
+  
+  
+  mt.q <- moran.test(cluster_anlaysis_parcels$biz, lw_queen, alternative = "greater")
+  
+  print(mt.q)
+  
+  Moran.test_queen.list <- bind_rows(Moran.test_queen.list, mt.q[2])
   
 }
+
+muni_names <- data.frame(munis)
+
+x <- bind_cols(muni_names, I_rook.list, Moran.test_rook.list, I_queen.list, Moran.test_queen.list)
 
 ```
 # 5.2 Classification of Clusters
