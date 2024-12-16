@@ -2041,7 +2041,7 @@ test.stat.df <- bind_cols(
 
 # General gist -
 # MAPC as a region - yes businesses tend to cluster in parcels but those clusters are dispersed throughout the region, there isnt one area that's a central locus for arts businesses.
-# Individual municipalities - It depends! Some do not exhibit clustering phenomenon, some do! Some places the clusters are concentrated - I stat closer to 1, others more dispersed - i stat closer to -1. And some places where the businesses tend not to be evenly spread throughout the parcels in the municipality.
+# Individual municipalities - It depends! Some do not exhibit clustering phenomenon, some do! Some places the clusters are concentrated - I stat closer to 1, others more dispersed - i stat closer to -1. And some places where the businesses tend to be evenly spread throughout the parcels in the municipality.
 
 ```
 # 5.2 Classification of Clusters
