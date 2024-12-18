@@ -193,7 +193,7 @@ rm(biz_test, parcel_test)
 
 #Now lets do the point in polygon join for the full dataset
 biz_in_parcel <- st_join(mapc_biz.spatial, mapc_parcels, join = st_within)
-#parcel_w_biz <- st_join(mapc_parcels, mapc_biz.spatial, join = st_within)
+biz_in_muni <- st_join(mapc_biz.spatial, mapc_municipalities, join = st_within)
 ```
 
 # 2.2 QA/QC SMall Muni Check
@@ -469,6 +469,59 @@ Parcel_Biz <- biz_in_parcel |>
   ungroup() |> 
   na.omit() |> 
   st_drop_geometry()
+
+# Table of 
+Industrial.Parcel_Biz <- biz_in_parcel |> 
+  group_by(
+    muni_name,
+    USE_CODE_SYMB
+  ) |> 
+  summarise(
+    arts.biz = n(),
+    arts.emp = sum(LOCEMP),
+    arts.epb = arts.emp/arts.biz
+  ) |> 
+  ungroup() |> 
+  na.omit() |> 
+  st_drop_geometry()
+
+# 
+tabular_parcels <- mapc_parcels |> 
+  st_drop_geometry() |> 
+  group_by(muni_name, USE_CODE_SYMB) |> 
+  summarise(
+    num_parcels = n()
+  ) |> 
+  ungroup() |> 
+  group_by(
+    muni_name
+  ) |> 
+  mutate(
+    tot_parcels = sum(num_parcels)
+  ) |> 
+  ungroup() |> 
+  mutate(
+    pct_parcels = num_parcels/tot_parcels
+  )
+
+x <- left_join(
+  tabular_parcels,
+  Industrial.Parcel_Biz,
+  by = c("muni_name", "USE_CODE_SYMB")
+) |> 
+  mutate(
+    across(everything(), ~replace_na(.x, 0)),
+    pct_Parcels_w_Arts.Biz = arts.biz/num_parcels
+  )
+
+x.industrial <- x |> 
+  filter(
+    USE_CODE_SYMB %in% c("Industrial")
+  ) |> 
+  mutate(
+    rank = (pct_Parcels_w_Arts.Biz - min(pct_Parcels_w_Arts.Biz))/ (max(pct_Parcels_w_Arts.Biz) - min(pct_Parcels_w_Arts.Biz))
+  )
+  
 ```
 
 
