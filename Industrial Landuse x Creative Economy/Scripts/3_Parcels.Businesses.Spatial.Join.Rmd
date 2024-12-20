@@ -520,7 +520,35 @@ x.industrial <- x |>
   ) |> 
   mutate(
     rank = (pct_Parcels_w_Arts.Biz - min(pct_Parcels_w_Arts.Biz))/ (max(pct_Parcels_w_Arts.Biz) - min(pct_Parcels_w_Arts.Biz))
+  ) |> 
+  select(
+    muni_name,
+    pct_Parcels_w_Arts.Biz,
+    rank
   )
+
+x.industrial.spatial <- inner_join(
+  mapc_municipalities,
+  x.industrial,
+  by = c("muni_name")
+)
+
+map.test <- ggplot() +
+  geom_sf(data = x.industrial.spatial, aes(fill = pct_Parcels_w_Arts.Biz), color = "black")+
+  scale_fill_continuous(high = "purple", low = "white", name = "% Industrial Parcels/nwith Arts Businesses") +
+  labs(
+    title = paste0("Percentage of Industrial Parcels with Arts Businesses (2023)")
+  )+
+  theme_minimal()+
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
+  )
+
+map.test
   
 ```
 
@@ -1231,7 +1259,7 @@ ggsave(
 
 #Map 2: Parcel arts business density map with overlay of industrial parcels
 map.2 <- ggplot() +
-  geom_sf(data = municipal_parcels, linewidth = 0.001, aes(fill = biz), color = "grey")+
+  geom_sf(data = municipal_parcels, linewidth = 0.001, aes(fill = biz), color = "grey") +
   scale_fill_continuous(
     high = "purple", low = "white",
     breaks = c(
