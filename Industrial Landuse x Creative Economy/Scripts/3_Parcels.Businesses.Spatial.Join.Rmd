@@ -472,6 +472,16 @@ Parcel_Biz <- biz_in_parcel |>
 
 # Table of 
 Industrial.Parcel_Biz <- biz_in_parcel |> 
+  mutate(USE_CODE_SYMB = case_when(
+    USE_CODE_SYMB == "Industrial Vacant" ~ "Industrial",
+    USE_CODE_SYMB == "Commercial Vacant" ~ "Commercial",
+    USE_CODE_SYMB == "Single Family Residence" ~ "Residential",
+    USE_CODE_SYMB == "Two or Three Family Residences" ~ "Residential",
+    USE_CODE_SYMB == "Residential Other" ~ "Residential",
+    USE_CODE_SYMB == "Residential Vacant" ~ "Residential",
+    USE_CODE_SYMB == "Apartments with Four or more units" ~ "Residential",
+    .default = USE_CODE_SYMB
+  )) |>
   group_by(
     muni_name,
     USE_CODE_SYMB
@@ -488,6 +498,16 @@ Industrial.Parcel_Biz <- biz_in_parcel |>
 # 
 tabular_parcels <- mapc_parcels |> 
   st_drop_geometry() |> 
+  mutate(USE_CODE_SYMB = case_when(
+    USE_CODE_SYMB == "Industrial Vacant" ~ "Industrial",
+    USE_CODE_SYMB == "Commercial Vacant" ~ "Commercial",
+    USE_CODE_SYMB == "Single Family Residence" ~ "Residential",
+    USE_CODE_SYMB == "Two or Three Family Residences" ~ "Residential",
+    USE_CODE_SYMB == "Residential Other" ~ "Residential",
+    USE_CODE_SYMB == "Residential Vacant" ~ "Residential",
+    USE_CODE_SYMB == "Apartments with Four or more units" ~ "Residential",
+    .default = USE_CODE_SYMB
+  )) |> 
   group_by(muni_name, USE_CODE_SYMB) |> 
   summarise(
     num_parcels = n()
@@ -514,6 +534,7 @@ x <- left_join(
     pct_Parcels_w_Arts.Biz = arts.biz/num_parcels
   )
 
+# Industrial
 x.industrial <- x |> 
   filter(
     USE_CODE_SYMB %in% c("Industrial")
@@ -538,6 +559,82 @@ map.test <- ggplot() +
   scale_fill_continuous(high = "purple", low = "white", name = "% Industrial Parcels/nwith Arts Businesses") +
   labs(
     title = paste0("Percentage of Industrial Parcels with Arts Businesses (2023)")
+  )+
+  theme_minimal()+
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
+  )
+
+map.test
+
+# Commercial
+
+x.commercial <- x |> 
+  filter(
+    USE_CODE_SYMB %in% c("Commercial")
+  ) |> 
+  mutate(
+    rank = (pct_Parcels_w_Arts.Biz - min(pct_Parcels_w_Arts.Biz))/ (max(pct_Parcels_w_Arts.Biz) - min(pct_Parcels_w_Arts.Biz))
+  ) |> 
+  select(
+    muni_name,
+    pct_Parcels_w_Arts.Biz,
+    rank
+  )
+
+x.commercial.spatial <- inner_join(
+  mapc_municipalities,
+  x.commercial,
+  by = c("muni_name")
+)
+
+map.test <- ggplot() +
+  geom_sf(data = x.commercial.spatial, aes(fill = pct_Parcels_w_Arts.Biz), color = "black")+
+  scale_fill_continuous(high = "purple", low = "white", name = "% Commercial Parcels/nwith Arts Businesses") +
+  labs(
+    title = paste0("Percentage of Commercial Parcels with Arts Businesses (2023)")
+  )+
+  theme_minimal()+
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(fill = NA, color = "black", linewidth = 0.5)
+  )
+
+map.test
+
+# Residential
+
+x.res <- x |> 
+  filter(
+    USE_CODE_SYMB %in% c("Residential")
+  ) |> 
+  mutate(
+    rank = (pct_Parcels_w_Arts.Biz - min(pct_Parcels_w_Arts.Biz))/ (max(pct_Parcels_w_Arts.Biz) - min(pct_Parcels_w_Arts.Biz))
+  ) |> 
+  select(
+    muni_name,
+    pct_Parcels_w_Arts.Biz,
+    rank
+  )
+
+x.res.spatial <- inner_join(
+  mapc_municipalities,
+  x.res,
+  by = c("muni_name")
+)
+
+map.test <- ggplot() +
+  geom_sf(data = x.res.spatial, aes(fill = pct_Parcels_w_Arts.Biz), color = "black")+
+  scale_fill_continuous(high = "purple", low = "white", name = "% Residential Parcels/nwith Arts Businesses") +
+  labs(
+    title = paste0("Percentage of Residential Parcels with Arts Businesses (2023)")
   )+
   theme_minimal()+
   theme(
